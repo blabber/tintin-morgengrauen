@@ -1,0 +1,24 @@
+#NOP {== Konfiguration zum Bearbeiten von Karten};
+
+#READ {tin/config.tin};
+#READ {tin/map.tin};
+#READ {tin/screen.tin};
+
+#ALIAS {u}  {#MAP move u};
+#ALIAS {o}  {#MAP move o};
+#ALIAS {n}  {#MAP move n};
+#ALIAS {no} {#MAP move no};
+#ALIAS {nw} {#MAP move nw};
+#ALIAS {s}  {#MAP move s};
+#ALIAS {so} {#MAP move so};
+#ALIAS {sw} {#MAP move sw};
+#ALIAS {ob} {#MAP move ob};
+#ALIAS {w}  {#MAP move w};
+
+#VARIABLE {MAP[autosave][seconds]} {0};
+kartografie an;
+
+#EVENT {PROGRAM TERMINATION}
+{
+	@MAP_SAVE{};
+};

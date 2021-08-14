@@ -1,0 +1,9 @@
+#NOP {== Konfiguration zum normalen Spielen};
+
+#READ {tin/config.tin};
+#READ {tin/comms.tin};
+#READ {tin/gmcp.tin};
+#READ {tin/highlights.tin};
+#READ {tin/session.tin};
+#READ {tin/map.tin};
+#READ {tin/screen.tin};

@@ -1,0 +1,221 @@
+#NOP {== GMCP Handling};
+
+#VARIABLE {GMCP[ready]} {0};
+
+#EVENT {IAC WILL GMCP}
+{
+	#LOCAL {_telnet[IAC]}  {\xFF};
+	#LOCAL {_telnet[DONT]} {\xFE};
+	#LOCAL {_telnet[DO]}   {\xFD};
+	#LOCAL {_telnet[WONT]} {\xFC};
+	#LOCAL {_telnet[WILL]} {\xFB};
+	#LOCAL {_telnet[SB]}   {\xFA};
+	#LOCAL {_telnet[SE]}   {\xF0};
+	#LOCAL {_telnet[GMCP]} {\xC9};
+
+	#INFO {SYSTEM} {SAVE};
+
+	#SEND {$_telnet[IAC]$_telnet[DO]$_telnet[GMCP]\};
+	#SEND {$_telnet[IAC]$_telnet[SB]$_telnet[GMCP]Core.Hello { "client": "$info[SYSTEM][CLIENT_NAME]", "version": "$info[SYSTEM][CLIENT_VERSION]" }$_telnet[IAC]$_telnet[SE]\};
+	#SEND {$_telnet[IAC]$_telnet[SB]$_telnet[GMCP]Core.Supports.Set [ "MG.char 1", "MG.room 1", "comm.channel 1" ]$_telnet[IAC]$_telnet[SE]\};
+
+	#VARIABLE {GMCP[ready]} {1};
+};
+
+#EVENT {IAC SB GMCP MG.char.vitals IAC SE}
+{
+	#VARIABLE {GMCP[char][vitals]} {%0};
+	@GMCP_PROMPT{};
+};
+
+#EVENT {IAC SB GMCP MG.char.maxvitals IAC SE}
+{
+	#VARIABLE {GMCP[char][maxvitals]} {%0};
+	@GMCP_PROMPT{};
+};
+
+#EVENT {IAC SB GMCP MG.room.info IAC SE}
+{
+	#VARIABLE {GMCP[room][info]} {%0};
+	@GMCP_PROMPT{};
+	@MAP_CHECK_ROOM_ID{};
+	@_gmcp_exits{};
+};
+
+#EVENT {IAC SB GMCP comm.channel IAC SE}
+{
+	#LOCAL {_channel} {%0};
+	#LOCAL {_msg}     {$_channel[msg]};
+	#LOCAL {_player}  {$_channel[player]};
+	#LOCAL {_chan}    {$_channel[chan]};
+
+	#LOCAL {_color} {cyan};
+	#IF {"$_chan" == "Tod"}
+	{
+		#LOCAL {_color} {cyan bold};
+	};
+
+	#LOCAL  {_prefix} {};
+	#FORMAT {_prefix} {[%s:%s]} {$_chan} {$_player};
+
+	#LOCAL {_emote} {0};
+	#REGEXP {$_msg} {$_prefix} {#LOCAL {_emote} {0}} {#LOCAL {_emote} {1}};
+
+	#IF {$_emote}
+	{
+		#FORMAT {_prefix} {[%s:%s} {$_chan} {$_player};
+	};
+
+	#REPLACE {_msg} {$_prefix} {};
+
+	#REPLACE {_msg} {;} {°°°};
+	#REPLACE {_msg} {\\n} {;};
+
+	#LOCAL {_line} {};
+	#FOREACH {$_msg} {_line}
+	{
+		#REPLACE {_line} {°°°} {;};
+
+		#LOCAL {_stripped} {};
+		#FORMAT {_stripped} {%p} {$_line};
+		#IF {"$_stripped" == ""}
+		{
+			#CONTINUE;
+		};
+
+		#IF {$_emote}
+		{
+			#FORMAT {_line} {%c%s %s}
+				{$_color} {$_prefix} {$_line};
+		};
+		#ELSE
+		{
+			#FORMAT {_line} {%c%s%c %s}
+				{$_color} {$_prefix} {reset} {$_line};
+		};
+
+		#SHOW {$_line};
+
+		@COMMS_ADD_LINE{$_line};
+	};
+
+	@COMMS_DISPLAY{};
+};
+
+#FUNCTION {GMCP_PROMPT}
+{
+	#IF {!$GMCP[ready]}
+	{
+		#RETURN {#NOP};
+	};
+
+	#LOCAL {_hp}     {$GMCP[char][vitals][hp]};
+	#LOCAL {_sp}     {$GMCP[char][vitals][sp]};
+	#LOCAL {_poison} {$GMCP[char][vitals][poison]};
+
+	#LOCAL {_max_hp}     {$GMCP[char][maxvitals][max_hp]};
+	#LOCAL {_max_sp}     {$GMCP[char][maxvitals][max_sp]};
+	#LOCAL {_max_poison} {$GMCP[char][vitals][max_poison]};
+
+	#LOCAL {_room}       {$GMCP[room][info][short]};
+	#LOCAL {_domain}     {$GMCP[room][info][domain]};
+
+	#LOCAL {_prompt} {};
+	#FORMAT {_prompt}
+		{<090>= %sHP: <190>%+2s<090>/%s | }
+		{$_prompt} {$_hp} {$_max_hp};
+
+	#IF {"$_sp" != ""}
+	{
+		#FORMAT {_prompt}
+			{%sSP: <190>%+2s<090>/%s | }
+			{$_prompt} {$_sp} {$_max_sp};
+	};
+
+	#if {"$_poison" != ""}
+	{
+		#FORMAT _prompt
+			{%sPOI: <190>%+2s<090>/%s | }
+			{$_prompt} {$_poison} {$_max_poison};
+	};
+
+
+	#FORMAT {_prompt}
+		{%s<090>%s > <190>%s<090>}
+		{$_prompt} {$_domain} {$_room};
+
+	#LINE ignore #SHOW {$_prompt} {-2};
+
+	#RETURN {#NOP};
+};
+
+
+#FUNCTION {_gmcp_exits}
+{
+	#LOCAL {_exit_list} {$GMCP[room][info][exits]};
+	#LOCAL {_exit_count} {0};
+
+	#LIST {_exit_list} {size} {_exit_count};
+
+	#IF {$_exit_count == 0 || $_exit_count == 1 && "$_exit_list[1]" == ""}
+	{
+		#LINE ignore #SHOW {<030>Es gibt keine sichtbaren Ausgaenge.<090>};
+
+		#RETURN {#NOP};
+	};
+
+	#IF {$_exit_count == 1}
+	{
+		#LOCAL {_color} {yellow bold};
+		#IF {@MAP_IS_EXIT_MAPPED{$_exit_list[1]}}
+		{
+			#LOCAL {_color} {yellow};
+		};
+
+		#LINE ignore #ECHO {%cEs gibt einen sichtbaren Ausgang: %c%s%c.}
+				{yellow} {$_color} {$_exit_list[1]} {yellow};
+
+		#RETURN {#NOP};
+	};
+
+	#SWITCH {$_exit_count}
+	{
+		#CASE {2} { #LOCAL {_exit_count_string} {zwei} };
+		#CASE {3} { #LOCAL {_exit_count_string} {drei} };
+		#CASE {4} { #LOCAL {_exit_count_string} {vier} };
+		#CASE {5} { #LOCAL {_exit_count_string} {fuenf} };
+		#CASE {6} { #LOCAL {_exit_count_string} {sechs} };
+		#CASE {7} { #LOCAL {_exit_count_string} {sieben} };
+		#CASE {8} { #LOCAL {_exit_count_string} {acht} };
+		#CASE {9} { #LOCAL {_exit_count_string} {neun} };
+		#DEFAULT  { #LOCAL {_exit_count_string} {$_exit_count} };
+	};
+
+	#LOCAL {_output} {};
+	#FORMAT {_output} {<030>Es gibt %s sichtbare Ausgaenge: }
+		{$_exit_count_string};
+
+	#LOCAL {_i} {0};
+	#LOOP {1} {$_exit_count} {_i}
+	{
+		#SWITCH {$_i}
+		{
+			#CASE {1}            { #NOP };
+			#CASE {$_exit_count} { #FORMAT {_output} {%s und } {$_output} };
+			#DEFAULT             { #FORMAT {_output} {%s, }    {$_output} };
+		};
+
+		#LOCAL {_color} {yellow bold};
+		#IF {@MAP_IS_EXIT_MAPPED{$_exit_list[$_i]}}
+		{
+			#LOCAL {_color} {yellow};
+		};
+
+		#FORMAT {_output} {%s%c%s%c} {$_output} {$_color} {$_exit_list[$_i]} {yellow};
+	};
+
+	#FORMAT {_output} {%s.} {$_output};
+
+	#LINE ignore #SHOW {$_output};
+	#RETURN {#NOP};
+};

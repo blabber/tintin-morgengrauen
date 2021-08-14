@@ -1,0 +1,138 @@
+#NOP {== Screen Management};
+
+#VARIABLE {SCREEN[horizontal]} {0};
+#VARIABLE {SCREEN[mapping]}    {0};
+
+#EVENT {SCREEN RESIZE}
+{
+	#LOCAL {_rows}   {%0};
+	#LOCAL {_cols}   {%1};
+	#LOCAL {_height} {%2};
+	#LOCAL {_width}  {%2};
+
+	#IF {$_cols >= 164 && !$SCREEN[mapping]}
+	{
+		#LOCAL    {_splitwin} {0};
+		#MATH     {_splitwin} {$_cols - 81};
+
+		#SPLIT {1} {2} {1} {$_splitwin};
+
+		#VARIABLE {SCREEN[horizontal]} {1};
+
+		#VARIABLE {SCREEN[map][ul][y]} {1};
+		#VARIABLE {SCREEN[map][ul][x]} {83};
+		#MATH     {SCREEN[map][lr][y]} {$_rows / 2};
+		#VARIABLE {SCREEN[map][lr][x]} {$_cols};
+		@_screen_draw_box{
+			{$SCREEN[map][ul][y]} {$SCREEN[map][ul][x]}
+			{$SCREEN[map][lr][y]} {$SCREEN[map][lr][x]}
+			{ Karte }};
+		
+		#MATH     {SCREEN[comms][ul][y]} {$SCREEN[map][lr][y] + 1};
+		#VARIABLE {SCREEN[comms][ul][x]} {$SCREEN[map][ul][x]};
+		#MATH     {SCREEN[comms][lr][y]} {$_rows - 2};
+		#VARIABLE {SCREEN[comms][lr][x]} {$SCREEN[map][lr][x]};
+		@_screen_draw_box{
+			{$SCREEN[comms][ul][y]} {$SCREEN[comms][ul][x]}
+			{$SCREEN[comms][lr][y]} {$SCREEN[comms][lr][x]}
+			{ Kommunikation }};
+		
+
+		#VARIABLE {SCREEN[scroll][ul][y]} {1};
+		#VARIABLE {SCREEN[scroll][ul][x]} {1};
+		#MATH     {SCREEN[scroll][lr][y]} {$_rows - 2};
+		#VARIABLE {SCREEN[scroll][lr][x]} {82};
+		@_screen_draw_box{
+			{$SCREEN[scroll][ul][y]} {$SCREEN[scroll][ul][x]}
+			{$SCREEN[scroll][lr][y]} {$SCREEN[scroll][lr][x]}
+			{ MorgenGrauen }};
+
+		#MATH {SCREEN[map][ul][y]} {$SCREEN[map][ul][y] + 1};
+		#MATH {SCREEN[map][ul][x]} {$SCREEN[map][ul][x] + 1};
+		#MATH {SCREEN[map][lr][y]} {$SCREEN[map][lr][y] - 1};
+		#MATH {SCREEN[map][lr][x]} {$SCREEN[map][lr][x] - 1};
+
+		#MATH {SCREEN[comms][ul][y]} {$SCREEN[comms][ul][y] + 1};
+		#MATH {SCREEN[comms][ul][x]} {$SCREEN[comms][ul][x] + 1};
+		#MATH {SCREEN[comms][lr][y]} {$SCREEN[comms][lr][y] - 1};
+		#MATH {SCREEN[comms][lr][x]} {$SCREEN[comms][lr][x] - 1};
+	};
+	#ELSE
+	{
+		#LOCAL {_splitwin} {0};
+		#IF {$SCREEN[mapping]}
+		{
+			#MATH {_splitwin} {$_rows - 10};
+		};
+		#ELSE
+		{
+			#MATH {_splitwin} {$_rows / 3};
+		};
+
+		#SPLIT {$_splitwin} {1};
+
+		#VARIABLE {SCREEN[horizontal]} {0};
+
+		#VARIABLE {SCREEN[map][ul][y]} {1};
+		#VARIABLE {SCREEN[map][ul][x]} {1};
+		#MATH     {SCREEN[map][lr][y]} {$_splitwin};
+		#VARIABLE {SCREEN[map][lr][x]} {$_cols};
+
+		#VARIABLE {SCREEN[scroll][ul][y]} {0};
+		#VARIABLE {SCREEN[scroll][ul][x]} {0};
+		#VARIABLE {SCREEN[scroll][lr][y]} {0};
+		#VARIABLE {SCREEN[scroll][lr][x]} {0};
+
+		#VARIABLE {SCREEN[comms][ul][y]} {0};
+		#VARIABLE {SCREEN[comms][ul][x]} {0};
+		#VARIABLE {SCREEN[comms][lr][y]} {0};
+		#VARIABLE {SCREEN[comms][lr][x]} {0};
+	};
+
+	@MAP_SETUP{};
+
+	#IF {$SESSION_CONNECTED}
+	{
+		@COMMS_DISPLAY{};
+		@GMCP_PROMPT{};
+	};
+
+	#BUFFER {end};
+};
+
+#FUNCTION {_screen_draw_box}
+{
+	#LOCAL {_y1} {%1};
+	#LOCAL {_x1} {%2};
+	#LOCAL {_y2} {%3};
+	#LOCAL {_x2} {%4};
+
+	#LOCAL {_caption} {%5};
+
+	#DRAW WHITE ROUNDED BOX
+		{$_y1} {$_x1} {$_y2} {$_x2};
+
+	#IF {"$_caption" != ""}
+	{
+		#MATH {_x1} {$_x1 +2};
+		#SHOW {$_caption} {$_y1} {$_x1};
+	};
+
+	#RETURN {#NOP};
+};
+
+#ALIAS {kartografie}
+{
+	#IF {"%1" == "an"}
+	{
+		#VARIABLE {SCREEN[mapping]} {1};
+	};
+	#ELSE
+	{
+		#VARIABLE {SCREEN[mapping]} {0};
+	};
+
+	#SCREEN raise {SCREEN RESIZE};
+};
+
+#SCREEN raise {SCREEN RESIZE};

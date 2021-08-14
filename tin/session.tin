@@ -1,0 +1,45 @@
+#VARIABLE {LOGIN_NAME} {};
+#VARIABLE {LOGIN_PASSWORT} {};
+
+#NOP {LOGIN_* Variablen in login.tin belegen!};
+#READ {tin/login.tin};
+
+#VARIABLE {SESSION_CONNECTED} {0};
+
+#IF {"$LOGIN_NAME" != ""}
+{
+	#ACTION {Wie heisst Du denn ("neu" fuer neuen Spieler)?}
+	{
+		#SEND {$LOGIN_NAME};
+		#UNACTION {Wie heisst Du denn ("neu" fuer neuen Spieler)?};
+		#UNVARIABLE {LOGIN_NAME};
+	};
+};
+
+#IF {"$_LOGIN_PASSWORT" != ""}
+{
+	#ACTION {Passwort:}
+	{
+		#SEND {$LOGIN_PASSWORT};
+		#UNACTION {Passwort:};
+		#UNVARIABLE {LOGIN_PASSWORT};
+	};
+};
+
+#EVENT {SESSION CONNECTED}
+{
+	#CONFIG {COMMAND COLOR} {\e[1;34m};
+	#PROMPT {^%%1> $} {%%1> } {-1};
+	#PROMPT {^]$} {]} {-1};
+
+	#VARIABLE {SESSION_CONNECTED} {1};
+};
+
+#EVENT {SESSION DISCONNECTED}
+{
+	@MAP_SAVE{Karte aktualisiert (Sitzungsende)};
+	#UNEVENT {SESSION DISCONNECTED};
+	#END
+};
+
+#SSL mg mg.mud.de 4712

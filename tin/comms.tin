@@ -1,0 +1,103 @@
+#VARIABLE {COMMS[buffer_size]} {100};
+
+#FUNCTION {_comms_init}
+{
+	#LOCAL {_i} {0};
+	#LOOP {1} {$COMMS[buffer_size]} {_i}
+	{
+		#VARIABLE {COMMS[buffer][$_i]} {};
+	}
+
+	#RETURN {#NOP};
+};
+
+#FUNCTION {COMMS_ADD_LINE}
+{
+	#LOCAL {_line} {%1};
+
+	#LOCAL  {_sublines} {};
+	#FORMAT {_sublines} {%w} {{$_line}{80}};
+
+	#LOCAL {_subline} {};
+	#FOREACH {$_sublines[%*]} {_subline}
+	{
+		#LIST {COMMS[buffer]} {insert} {-1} {$_subline};
+	};
+
+	#WHILE {&COMMS[buffer][] > $COMMS[buffer_size]}
+	{
+		#LIST {COMMS[buffer]} {delete} {1};
+	};
+
+	#RETURN {#NOP};
+};
+
+#FUNCTION {COMMS_DISPLAY}
+{
+	#IF {$SCREEN[comms][ul][y] == 0}
+	{
+		#RETURN {#NOP};
+	};
+
+	#SCREEN clear square
+		{$SCREEN[comms][ul][y]} {$SCREEN[comms][ul][x]}
+		{$SCREEN[comms][lr][y]} {$SCREEN[comms][lr][x]};
+
+
+	#LOCAL {_lines} {0};
+	#MATH  {_lines} {$SCREEN[comms][lr][y] - $SCREEN[comms][ul][y] + 1};
+
+	#LOCAL {_i} {0};
+	#LOOP {1} {$_lines} {_i}
+	{
+		#LOCAL {_y} {0};
+		#LOCAL {_x} {0};
+
+		#MATH {_y} {$SCREEN[comms][lr][y] - $_i + 1};
+		#MATH {_x} {$SCREEN[comms][ul][x]};
+
+		#LOCAL {_j} {0};
+		#MATH  {_j} {0 - $_i};
+
+		#LOCAL  {_line} {$COMMS[buffer][$_j]};
+		#FORMAT {_line} {%s} {$_line};
+
+		#LINE ignore #SHOW {$_line} {$_y} {$_x};
+	};
+
+	#RETURN {#NOP};
+};
+
+#ACTION {%1 teilt Dir mit: %2}
+{
+	#LOCAL  {_line} {};
+	#FORMAT {_line} {%c%s teilt Dir mit:%c %s} {light green} {%1} {reset} {%2};
+	@COMMS_ADD_LINE{$_line};
+	@COMMS_DISPLAY{};
+};
+
+#ACTION {Du teilst %1 mit: %2}
+{
+	#LOCAL  {_line} {};
+	#FORMAT {_line} {%cDu teilst %s mit:%c %s} {light green} {%1} {reset} {%2};
+	@COMMS_ADD_LINE{$_line};
+	@COMMS_DISPLAY{};
+};
+
+#ACTION {Du rufst: %1}
+{
+	#LOCAL  {_line} {};
+	#FORMAT {_line} {%cDu rufst:%c %s} {light yellow} {reset} {%1};
+	@COMMS_ADD_LINE{$_line};
+	@COMMS_DISPLAY{};
+};
+
+#ACTION {%1 ruft: %2}
+{
+	#LOCAL  {_line} {};
+	#FORMAT {_line} {%c%s ruft:%c %s} {light yellow} {%1} {reset} {%2};
+	@COMMS_ADD_LINE{$_line};
+	@COMMS_DISPLAY{};
+};
+
+@_comms_init{};

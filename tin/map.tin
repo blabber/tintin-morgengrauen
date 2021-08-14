@@ -1,0 +1,237 @@
+#NOP {== Automapper};
+
+#NOP {Diese Variablen werden in tin/config.tin vorbelegt.};
+#NOP {#VARIABLE {MAP[autosave][seconds]} {300}};
+#NOP {#VARIABLE {MAP[autosave][git]}     {1}};
+
+#VARIABLE {MAP[file]}       {map/mg.map};
+#VARIABLE {MAP[dirty]}      {0};
+#VARIABLE {MAP[first_room]} {1};
+#VARIABLE {MAP[in_map]}     {0};
+#VARIABLE {MAP[loaded]}     {0};
+
+#UNPATHDIR {d}  {u}  {32};
+#UNPATHDIR {e}  {w}  {2};
+#UNPATHDIR {n}  {s}  {1};
+#UNPATHDIR {ne} {sw} {3};
+#UNPATHDIR {nw} {se} {9};
+#UNPATHDIR {s}  {n}  {4};
+#UNPATHDIR {se} {nw} {6};
+#UNPATHDIR {sw} {ne} {12};
+#UNPATHDIR {u}  {d}  {16};
+#UNPATHDIR {w}  {e}  {8};
+
+#PATHDIR {u}  {ob} {32};
+#PATHDIR {o}  {w}  {2};
+#PATHDIR {n}  {s}  {1};
+#PATHDIR {no} {sw} {3};
+#PATHDIR {nw} {so} {9};
+#PATHDIR {s}  {n}  {4};
+#PATHDIR {so} {nw} {6};
+#PATHDIR {sw} {no} {12};
+#PATHDIR {ob} {u}  {16};
+#PATHDIR {w}  {o}  {8};
+
+#ALIAS {unten}      {u};
+#ALIAS {osten}      {o};
+#ALIAS {norden}     {n};
+#ALIAS {nordosten}  {no};
+#ALIAS {nordwesten} {nw};
+#ALIAS {sueden}     {s};
+#ALIAS {suedosten}  {so};
+#ALIAS {suedwesten} {sw};
+#ALIAS {oben}       {ob};
+#ALIAS {westen}     {w};
+
+#EVENT {MAP ENTER MAP}
+{
+	#VARIABLE {MAP[in_map]} {1};
+};
+
+#EVENT {MAP EXIT MAP}
+{
+	#VARIABLE {MAP[in_map]} {0};
+};
+
+#EVENT {MAP CREATE ROOM}
+{
+	#VARIABLE {MAP[dirty]} {1};
+};
+
+#EVENT {MAP DELETE ROOM}
+{
+	#VARIABLE {MAP[dirty]} {1};
+};
+
+#EVENT {MAP ENTER ROOM}
+{
+	#IF {!$MAP[first_room]}
+	{
+		#VARIABLE {GMCP[room][info][short]} {};
+		#VARIABLE {GMCP[room][info][id]} {};
+
+		#IF {$SESSION_CONNECTED}
+		{
+			@GMCP_PROMPT{};
+		}
+	};
+	#VARIABLE {MAP[first_room]} {0};
+
+	#LOCAL {_roomname} {};
+	#LOCAL {_roomarea} {};
+
+	#MAP get {roomname} {_roomname};
+	#MAP get {roomarea} {_roomarea};
+
+	#LOCAL {_output} {<190>## Map:<090> };
+
+	#if {"$_roomarea" != ""}
+	{
+		#FORMAT {_output} {%s[%s] } {$_output} {$_roomarea};
+	};
+		
+	#FORMAT {_output} {%s<190>%s<090>} {$_output} {$_roomname};
+
+	#SHOW {};
+	#SHOW {$_output};
+};
+
+#IF {$MAP[autosave][seconds] > 0}
+{
+	#TICKER {map_autosave}
+	{
+		#IF {$MAP[dirty]}
+		{
+			@MAP_SAVE{Karte aktualisiert (periodisch)};
+			#SHOW {<020>autosaved current map...};
+			#VARIABLE {MAP[dirty]} {0};
+		};
+	} {$MAP[autosave][seconds]};
+};
+
+#FUNCTION {MAP_SETUP}
+{
+	#IF {!$MAP[loaded]}
+	{
+		#MAP read {$MAP[file]};
+		#MAP flag vtmap on;
+		#MAP return;
+
+		#VARIABLE {MAP[loaded]} {1};
+	};
+
+	#MAP offset
+		{$SCREEN[map][ul][y]} {$SCREEN[map][ul][x]}
+		{$SCREEN[map][lr][y]} {$SCREEN[map][lr][x]};
+
+	#RETURN {#NOP};
+};
+
+#FUNCTION {MAP_SAVE}
+{
+	#MAP write {$MAP[file]};
+
+	#IF {$MAP[autosave][git] && "%1" != ""}
+	{
+		#SYSTEM {git add "$MAP[file]" > /dev/null};
+		#SYSTEM {git commit -m "%1" > /dev/null};
+	};
+
+	#RETURN {#NOP};
+};
+
+#FUNCTION {MAP_IS_EXIT_MAPPED}
+{
+	#IF {!$MAP[in_map]}
+	{
+		#RETURN {0};
+	};
+
+	#LOCAL {_target} {};
+	#SWITCH {"%1"}
+	{
+		#CASE "unten"      { #LOCAL {_target} {u} };
+		#CASE "osten"      { #LOCAL {_target} {o} };
+		#CASE "norden"     { #LOCAL {_target} {n} };
+		#CASE "nordosten"  { #LOCAL {_target} {no} };
+		#CASE "nordwesten" { #LOCAL {_target} {nw} };
+		#CASE "sueden"     { #LOCAL {_target} {s} };
+		#CASE "suedosten"  { #LOCAL {_target} {so} };
+		#CASE "suedwesten" { #LOCAL {_target} {sw} };
+		#CASE "oben"       { #LOCAL {_target} {ob} };
+		#CASE "westen"     { #LOCAL {_target} {w} };
+		#DEFAULT           { #LOCAL {_target} {%1} };
+	};
+
+	#LOCAL {_exits} {};
+	#MAP get roomexits {_exits};
+
+	#LOCAL {_exit_name} {};
+	#FOREACH {*_exits[%*]} {_exit_name}
+	{
+		#LOCAL {_exit} {};
+		#MAP exit {$_exit_name} save {_exit};
+		#IF {"$_exit[name]" == "$_target" || "$_exit[command]" == "$_target"}
+		{
+			#RETURN {1};
+		};
+	};
+
+	#RETURN {0};
+};
+
+#FUNCTION {MAP_CHECK_ROOM_ID}
+{
+	#IF {!$MAP[in_map]}
+	{
+		#RETURN {#NOP};
+	};
+
+	#LOCAL {_gmcp_id} {$GMCP[room][info][id]};
+	#IF {"$_gmcp_id" == ""}
+	{
+		#RETURN {#NOP};
+	};
+
+
+	#LOCAL {_map_id} {};
+	#MAP get {roomid} {_map_id};
+
+	#IF {"$_map_id" == "$_gmcp_id"}
+	{
+		#RETURN {#NOP};
+	};
+
+	#LOCAL {_duplicates} {};
+	#MAP list {roomid} {$_gmcp_id} {variable} {_duplicates};
+	#IF {&_duplicates[]}
+	{
+		#ECHO {%cDiese ID (%s) ist bereits kartografiert.} {yellow} {$_gmcp_id};
+
+		#LOCAL {_vnum} {};
+		#FOREACH {*_duplicates[%*]} {_vnum}
+		{
+			#ECHO {%cvnum: %+5s} {yellow} {$_vnum};
+		};
+
+		#RETURN {#NOP};
+	};
+
+
+	#IF {"$_map_id" == ""}
+	{
+		#MAP set {roomid} {$_gmcp_id};
+		#VARIABLE {MAP[dirty]} {1};
+
+		#RETURN {#NOP};
+	};
+
+	#IF {"$_map_id" != "$_gmcp_id"}
+	{
+		#ECHO {%c%s} {yellow} {IDs stimmen nicht ueberein!};
+		#ECHO {%cKarte: %s} {yellow} {$_map_id};
+		#ECHO {%cGMCP:  %s} {yellow} {$_gmcp_id};
+
+		#RETURN {#NOP};
+	};
+};

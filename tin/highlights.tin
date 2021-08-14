@@ -1,0 +1,41 @@
+#NOP {== Highlights};
+
+#HIGHLIGHT {{[Nn]ord}} {bold};
+#HIGHLIGHT {{[Ss]ued}} {bold};
+#HIGHLIGHT {{[Ww]est}} {bold};
+#HIGHLIGHT {{[Oo]st}} {bold};
+
+#HIGHLIGHT {{[Nn]orden}} {bold};
+#HIGHLIGHT {{[Ss]ueden}} {bold};
+#HIGHLIGHT {{[Ww]esten}} {bold};
+#HIGHLIGHT {{[Oo]sten}} {bold};
+
+#HIGHLIGHT {{[Nn]oerdlich}} {bold};
+#HIGHLIGHT {{[Ss]uedlich}} {bold};
+#HIGHLIGHT {{[Ww]estlich}} {bold};
+#HIGHLIGHT {{[Oo]estlich}} {bold};
+
+#HIGHLIGHT {{[Nn]ordwestlich}} {bold};
+#HIGHLIGHT {{[Nn]ordoestlich}} {bold};
+#HIGHLIGHT {{[Ss]uedwestlich}} {bold};
+#HIGHLIGHT {{[Ss]uedoestlich}} {bold};
+
+#HIGHLIGHT {{[Nn]ordwesten}} {bold};
+#HIGHLIGHT {{[Nn]ordosten}} {bold};
+#HIGHLIGHT {{[Ss]uedwesten}} {bold};
+#HIGHLIGHT {{[Ss]uedosten}} {bold};
+
+#HIGHLIGHT {{[Oo]ben}} {bold};
+#HIGHLIGHT {{[Uu]nten}} {bold};
+
+#HIGHLIGHT {{[Rr]auf}} {bold};
+#HIGHLIGHT {{[Rr]unter}} {bold};
+
+#HIGHLIGHT {{^Es gibt .* sichtbar.* Ausga.*:.*}} {yellow} {4};
+
+#HIGHLIGHT {{^\w* teilt Dir mit:}} {light green};
+#HIGHLIGHT {{^Du teilst \w* mit:}} {light green};
+#HIGHLIGHT {{^\w* ruft:}} {light yellow};
+#HIGHLIGHT {{^Du rufst:}} {light yellow};
+
+#HIGHLIGHT {{^Wie bitte\?}} {light red};

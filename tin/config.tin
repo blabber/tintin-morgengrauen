@@ -1,0 +1,11 @@
+#NOP { Der Timeout, nachdem der aktuelle Zustand der Karte gespeichert werden }
+#NOP { soll. Ein Wert von 0 deaktiviert das periodische automatische          }
+#NOP { Speichern. Bei Sitzungsende wird weiterhin die Karte gespeichert.      }
+#VARIABLE {MAP[autosave][seconds]} {0};
+
+#NOP { Ein Wert, der angibt ob beim Speichern der Zustand der Karte in das    }
+#NOP { git Repository committed werden soll (1) oder nicht (0).               }
+#NOP { CAVE: Dieses Feature kann nur in un*x-artigen Umgebungen verwendet     }
+#NOP { werden (und setzt offensichtlich ein installiertes git im Pfad voraus. }
+#VARIABLE {MAP[autosave][git]} {0};
+
