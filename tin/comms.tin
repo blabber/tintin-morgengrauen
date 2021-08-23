@@ -6,7 +6,7 @@
 	#LOOP {1} {$COMMS[buffer_size]} {_i}
 	{
 		#VARIABLE {COMMS[buffer][$_i]} {};
-	}
+	};
 
 	#RETURN {#NOP};
 };
