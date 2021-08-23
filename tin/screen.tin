@@ -10,6 +10,8 @@
 	#LOCAL {_height} {%2};
 	#LOCAL {_width}  {%2};
 
+	#VARIABLE {SCREEN[cols]} {$_cols};
+
 	#IF {$_cols >= 164 && !$SCREEN[mapping]}
 	{
 		#LOCAL    {_splitwin} {0};

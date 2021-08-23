@@ -144,6 +144,8 @@
 		{%s<090>%s > <190>%s<090>}
 		{$_prompt} {$_domain} {$_room};
 
+	#FORMAT {_prompt} {%.$SCREEN[cols]s} {$_prompt};
+
 	#LINE ignore #SHOW {$_prompt} {-2};
 
 	#RETURN {#NOP};
