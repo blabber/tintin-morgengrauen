@@ -64,7 +64,7 @@ So kannst Du diese Konfiguration verwenden
 ### Einfache Variante (ohne Autosave der Karte)
 
 1. Installiere eine aktuelle Version von
-   (TinTin++)[https://tintin.mudhalla.net/install.php].
+   [TinTin++](https://tintin.mudhalla.net/install.php).
 2. Klone dieses Repository oder lade dir ein
    [Archiv](https://github.com/blabber/tinin-morgengrauen/archive/refs/heads/main.zip)
    herunter (das Du dann natürlich auch entpackst).
@@ -82,7 +82,7 @@ speichern.
 ### Komplexere Variante (mit Autosave und Versionierung der Karte)
 
 1. Installiere eine aktuelle Version von
-   (TinTin++)[https://tintin.mudhalla.net/install.php].
+   [TinTin++](https://tintin.mudhalla.net/install.php).
 2. Klone dieses Repository.
 3. Erstelle einen neuen Branch.
 4. (Optional) Um das Autologin zu verwenden, trage deine Logindaten in
