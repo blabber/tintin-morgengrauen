@@ -1,0 +1,8 @@
+#NOP {== Alles was mit Prompts zu tun hat};
+
+#EVENT {RECEIVED PROMPT}
+{
+	#SCREEN clear square {-1} {1} {-1} {-1};
+	#SHOW {%1} {-1};
+	#LINE gag;
+};

@@ -29,9 +29,6 @@
 #EVENT {SESSION CONNECTED}
 {
 	#CONFIG {COMMAND COLOR} {\e[1;34m};
-	#PROMPT {^%%1> $} {%%1> } {-1};
-	#PROMPT {^]$} {]} {-1};
-
 	#VARIABLE {SESSION_CONNECTED} {1};
 };
 
