@@ -15,7 +15,7 @@ Features
   * Vitalwerte in der Statusleiste
   * Kurzbeschreibung des Raums in der Statusleiste
   * Mitführen der Raum ID in der Karte und entsprechende Hinweise, wenn
-    * ein Raum betreten wird, der bereits an anderer Stele in der Karte
+    * ein Raum betreten wird, der bereits an anderer Stelle in der Karte
       existiert
     * die ID die vom Mud gemeldet wird nicht mit der Karte übereinstimmt
 
