@@ -1,0 +1,51 @@
+#NOP {== Ersetzen von Umlauten};
+
+#FUNCTION {_replace_umlauts}
+{
+	#LOCAL {_line} {%1};
+
+	#REPLACE {_line} {Ä} {Ae};
+	#REPLACE {_line} {Ö} {Oe};
+	#REPLACE {_line} {Ü} {Ue};
+	#REPLACE {_line} {ä} {ae};
+	#REPLACE {_line} {ö} {oe};
+	#REPLACE {_line} {ü} {ue};
+	#REPLACE {_line} {ß} {ss};
+
+	#RETURN {$_line};
+};
+
+#ALIAS {%1Ä%2}
+{
+	@_replace_umlauts{%0};
+} {2};
+
+#ALIAS {%1Ö%2}
+{
+	@_replace_umlauts{%0};
+} {2};
+
+#ALIAS {%1Ü%2}
+{
+	@_replace_umlauts{%0};
+} {2};
+
+#ALIAS {%1ä%2}
+{
+	@_replace_umlauts{%0};
+} {2};
+
+#ALIAS {%1ö%2}
+{
+	@_replace_umlauts{%0};
+} {2};
+
+#ALIAS {%1ü%2}
+{
+	@_replace_umlauts{%0};
+} {2};
+
+#ALIAS {%1ß%2}
+{
+	@_replace_umlauts{%0};
+} {2};

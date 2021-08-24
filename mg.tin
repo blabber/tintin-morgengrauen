@@ -8,3 +8,4 @@
 #READ {tin/map.tin};
 #READ {tin/screen.tin};
 #READ {tin/prompt.tin};
+#READ {tin/umlauts.tin};
