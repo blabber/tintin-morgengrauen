@@ -1,0 +1,16 @@
+#NOP {== Macros};
+
+#MACRO {\eOa\eOa}   {n};
+#MACRO {\eOa\eOc}   {no};
+#MACRO {\eOa\eOd}   {nw};
+#MACRO {\eOb\eOb}   {s};
+#MACRO {\eOb\eOc}   {so};
+#MACRO {\eOb\eOd}   {sw};
+#MACRO {\eOc\eOa}   {no};
+#MACRO {\eOc\eOb}   {so};
+#MACRO {\eOc\eOc}   {o};
+#MACRO {\eOd\eOa}   {nw};
+#MACRO {\eOd\eOb}   {sw};
+#MACRO {\eOd\eOd}   {w};
+#MACRO {\e[5^\e[5^} {ob};
+#MACRO {\e[6^\e[6^} {u};

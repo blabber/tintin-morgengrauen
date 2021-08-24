@@ -9,3 +9,4 @@
 #READ {tin/screen.tin};
 #READ {tin/prompt.tin};
 #READ {tin/umlauts.tin};
+#READ {tin/macros.tin};

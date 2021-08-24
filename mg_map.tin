@@ -3,6 +3,7 @@
 #READ {tin/config.tin};
 #READ {tin/map.tin};
 #READ {tin/screen.tin};
+#READ {tin/macros.tin};
 
 #ALIAS {u}  {#MAP move u};
 #ALIAS {o}  {#MAP move o};

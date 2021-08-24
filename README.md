@@ -141,6 +141,26 @@ ausgehe das jeder eine solche Konfiguration einsetzt, und die Gefahr von
 Informationsverlust besteht, enthält diese Karte den Stub einer ASCII Karte
 (`#map flag asciigraphics`).
 
+Vereinfachte Navigation
+-----------------------
+
+Makro | Bewegung
+----- | --------
+Strg-← Strg-← | `w`
+Strg-→ Strg-→ | `o`
+Strg-↑ Strg-↑ | `n`
+Strg-↓ Strg-↓ | `s`
+Strg-↑ Strg-← | `nw`
+Strg-← Strg-↑ | `nw`
+Strg-↑ Strg-→ | `no`
+Strg-→ Strg-↑ | `no`
+Strg-↓ Strg-← | `sw`
+Strg-← Strg-↓ | `sw`
+Strg-↓ Strg-→ | `so`
+Strg-→ Strg-↓ | `so`
+Strg-Bild↑ Strg-Bild↑ | `ob`
+Strg-Bild↓ Strg-Bild↓ | `u`
+
 Wie ich spiele
 --------------
 
