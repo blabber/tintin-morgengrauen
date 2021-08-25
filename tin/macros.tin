@@ -1,16 +1,33 @@
 #NOP {== Macros};
 
+#NOP { Makros für rxvt-unicode };
 #MACRO {\eOa\eOa}   {n};
-#MACRO {\eOa\eOc}   {no};
-#MACRO {\eOa\eOd}   {nw};
 #MACRO {\eOb\eOb}   {s};
-#MACRO {\eOb\eOc}   {so};
-#MACRO {\eOb\eOd}   {sw};
-#MACRO {\eOc\eOa}   {no};
-#MACRO {\eOc\eOb}   {so};
-#MACRO {\eOc\eOc}   {o};
-#MACRO {\eOd\eOa}   {nw};
-#MACRO {\eOd\eOb}   {sw};
 #MACRO {\eOd\eOd}   {w};
+#MACRO {\eOc\eOc}   {o};
+#MACRO {\eOa\eOd}   {nw};
+#MACRO {\eOd\eOa}   {nw};
+#MACRO {\eOa\eOc}   {no};
+#MACRO {\eOc\eOa}   {no};
+#MACRO {\eOb\eOc}   {so};
+#MACRO {\eOc\eOb}   {so};
+#MACRO {\eOb\eOd}   {sw};
+#MACRO {\eOd\eOb}   {sw};
 #MACRO {\e[5^\e[5^} {ob};
 #MACRO {\e[6^\e[6^} {u};
+
+#NOP { Makros für xterm/tmux };
+#MACRO {\e[1;5A\e[1;5A} {n}
+#MACRO {\e[1;5B\e[1;5B} {s}
+#MACRO {\e[1;5D\e[1;5D} {w}
+#MACRO {\e[1;5C\e[1;5C} {o}
+#MACRO {\e[1;5A\e[1;5D} {nw}
+#MACRO {\e[1;5D\e[1;5A} {nw}
+#MACRO {\e[1;5A\e[1;5C} {no}
+#MACRO {\e[1;5C\e[1;5A} {no}
+#MACRO {\e[1;5B\e[1;5D} {sw}
+#MACRO {\e[1;5D\e[1;5B} {sw}
+#MACRO {\e[1;5B\e[1;5C} {so}
+#MACRO {\e[1;5C\e[1;5B} {so}
+#MACRO {\e[5;5~\e[5;5~} {ob}
+#MACRO {\e[6;5~\e[6;5~} {u}
