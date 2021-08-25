@@ -11,6 +11,8 @@ Features
 
 * verschiedene Layouts (siehe unten)
 * Hervorhebungen für noch nicht kartografierte sichtbare Ausgänge
+* Hervorhebungen für Räume mit nicht kartografierten sichtbaren Ausgängen
+  * wird beim Betreten und Verlassen eines Raums aktualisiert
 * automatisches Ersetzen von Umlauten
 * [GMPC](http://mg.mud.de/cgi-bin/mgn-doc-search?help/GMCP) Integration
   * Vitalwerte in der Statusleiste

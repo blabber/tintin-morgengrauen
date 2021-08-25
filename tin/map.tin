@@ -9,6 +9,7 @@
 #VARIABLE {MAP[first_room]} {1};
 #VARIABLE {MAP[in_map]}     {0};
 #VARIABLE {MAP[loaded]}     {0};
+#VARIABLE {MAP[mismatch]}   {1};
 
 #UNPATHDIR {d}  {u}  {32};
 #UNPATHDIR {e}  {w}  {2};
@@ -89,11 +90,26 @@
 	{
 		#FORMAT {_output} {%s[%s] } {$_output} {$_roomarea};
 	};
-		
+
 	#FORMAT {_output} {%s<190>%s<090>} {$_output} {$_roomname};
 
 	#SHOW {};
 	#SHOW {$_output};
+};
+
+#EVENT {MAP EXIT ROOM}
+{
+	#LOCAL {_old_vnum} {%0};
+	#LOCAL {_data}     {};
+
+	#MAP get roomdata {_data} {$_old_vnum};
+	#IF {&_data[exits]}
+	{
+		#LOCAL {_param[vnum]}  {$_old_vnum};
+		#LOCAL {_param[exits]} {$_data[exits]};
+
+		#LOCAL {_void} {@_map_check_exits_vnum{$_param}};
+	};
 };
 
 #IF {$MAP[autosave][seconds] > 0}
@@ -140,15 +156,18 @@
 	#RETURN {#NOP};
 };
 
-#FUNCTION {MAP_IS_EXIT_MAPPED}
+#FUNCTION {_map_is_exit_mapped}
 {
+	#LOCAL {_vnum} {%1};
+	#LOCAL {_exit} {%2};
+
 	#IF {!$MAP[in_map]}
 	{
 		#RETURN {0};
 	};
 
 	#LOCAL {_target} {};
-	#SWITCH {"%1"}
+	#SWITCH {"$_exit"}
 	{
 		#CASE "unten"      { #LOCAL {_target} {u} };
 		#CASE "osten"      { #LOCAL {_target} {o} };
@@ -164,7 +183,7 @@
 	};
 
 	#LOCAL {_exits} {};
-	#MAP get roomexits {_exits};
+	#MAP get roomexits {_exits} {$_vnum};
 
 	#LOCAL {_exit_name} {};
 	#FOREACH {*_exits[%*]} {_exit_name}
@@ -182,6 +201,8 @@
 
 #FUNCTION {MAP_CHECK_ROOM_ID}
 {
+	#VARIABLE {MAP[mismatch]} {1};
+
 	#IF {!$MAP[in_map]}
 	{
 		#RETURN {#NOP};
@@ -199,6 +220,7 @@
 
 	#IF {"$_map_id" == "$_gmcp_id"}
 	{
+		#VARIABLE {MAP[mismatch]} {0};
 		#RETURN {#NOP};
 	};
 
@@ -223,15 +245,60 @@
 		#MAP set {roomid} {$_gmcp_id};
 		#VARIABLE {MAP[dirty]} {1};
 
+		#VARIABLE {MAP[mismatch]} {0};
 		#RETURN {#NOP};
 	};
 
-	#IF {"$_map_id" != "$_gmcp_id"}
+	#ECHO {%c%s} {yellow} {IDs stimmen nicht ueberein!};
+	#ECHO {%cKarte: %s} {yellow} {$_map_id};
+	#ECHO {%cGMCP:  %s} {yellow} {$_gmcp_id};
+
+	#RETURN {#NOP};
+};
+
+#FUNCTION {MAP_CHECK_EXITS}
+{
+	#IF {!$MAP[in_map] || $MAP[mismatch]}
 	{
-		#ECHO {%c%s} {yellow} {IDs stimmen nicht ueberein!};
-		#ECHO {%cKarte: %s} {yellow} {$_map_id};
-		#ECHO {%cGMCP:  %s} {yellow} {$_gmcp_id};
-
-		#RETURN {#NOP};
+		#RETURN {$_exits};
 	};
+
+	#LOCAL {_param[exits]} {%0};
+	#MAP get roomvnum {_param[vnum]};
+
+	#RETURN {@_map_check_exits_vnum{$_param}};
+}
+
+#FUNCTION {_map_check_exits_vnum}
+{
+	#LOCAL {_param} {%0};
+	#LOCAL {_vnum}  {$_param[vnum]};
+	#LOCAL {_exits} {$_param[exits]};
+
+	#LOCAL {_room_done} {1};
+	#LOCAL {_exit}      {};
+
+	#FOREACH {*_exits[%*]} {_exit}
+	{
+		#LOCAL {_is_mapped}     {@_map_is_exit_mapped{$_vnum; $_exit}};
+		#LOCAL {_exits[$_exit]} {$_is_mapped};
+
+		#IF {!$_is_mapped}
+		{
+			#LOCAL {_room_done} {0};
+		};
+	};
+
+	#MAP set roomdata {{exits} {$_exits}} {$_vnum};
+
+	#IF {$_room_done}
+	{
+		#MAP set roomcolor {} {$_vnum};
+	};
+	#ELSE
+	{
+		#MAP set roomcolor {<160>} {$_vnum};
+	};
+
+	#RETURN {$_exits};
 };

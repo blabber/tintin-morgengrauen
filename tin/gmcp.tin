@@ -166,10 +166,20 @@
 		#RETURN {#NOP};
 	};
 
+	#LOCAL {_checked_exits} {};
+	#LOCAL {_exit}          {};
+
+	#FOREACH {$_exit_list[%*]} {_exit}
+	{
+		#LOCAL {_checked_exits[$_exit]} {0};
+	};
+
+	#LOCAL {_checked_exits} {@MAP_CHECK_EXITS{$_checked_exits}};
+
 	#IF {$_exit_count == 1}
 	{
 		#LOCAL {_color} {yellow bold};
-		#IF {@MAP_IS_EXIT_MAPPED{$_exit_list[1]}}
+		#IF {$_checked_exits[$_exit_list[1]]}
 		{
 			#LOCAL {_color} {yellow};
 		};
@@ -208,7 +218,7 @@
 		};
 
 		#LOCAL {_color} {yellow bold};
-		#IF {@MAP_IS_EXIT_MAPPED{$_exit_list[$_i]}}
+		#IF {$_checked_exits[$_exit_list[$_i]]}
 		{
 			#LOCAL {_color} {yellow};
 		};
