@@ -179,7 +179,7 @@
 		#CASE "suedwesten" { #LOCAL {_target} {sw} };
 		#CASE "oben"       { #LOCAL {_target} {ob} };
 		#CASE "westen"     { #LOCAL {_target} {w} };
-		#DEFAULT           { #LOCAL {_target} {%1} };
+		#DEFAULT           { #LOCAL {_target} {$_exit} };
 	};
 
 	#LOCAL {_exits} {};
@@ -258,11 +258,6 @@
 
 #FUNCTION {MAP_CHECK_EXITS}
 {
-	#IF {!$MAP[in_map] || $MAP[mismatch]}
-	{
-		#RETURN {$_exits};
-	};
-
 	#LOCAL {_param[exits]} {%0};
 	#MAP get roomvnum {_param[vnum]};
 
@@ -274,6 +269,11 @@
 	#LOCAL {_param} {%0};
 	#LOCAL {_vnum}  {$_param[vnum]};
 	#LOCAL {_exits} {$_param[exits]};
+
+	#IF {!$MAP[in_map] || $MAP[mismatch] || !$SESSION_CONNECTED}
+	{
+		#RETURN {$_exits};
+	};
 
 	#LOCAL {_room_done} {1};
 	#LOCAL {_exit}      {};
