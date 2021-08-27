@@ -6,6 +6,8 @@ Konfiguration für das deutschsprachige
 [MUD](https://de.wikipedia.org/wiki/Multi_User_Dungeon)
 [MorgenGrauen](http://mg.mud.de/).
 
+Getestet mit `TinTin++ 2.02.11`.
+
 Features
 --------
 
