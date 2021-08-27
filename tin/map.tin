@@ -259,6 +259,12 @@
 #FUNCTION {MAP_CHECK_EXITS}
 {
 	#LOCAL {_param[exits]} {%0};
+
+	#IF {!$MAP[in_map]}
+	{
+		#RETURN {$_param[exits]};
+	}
+
 	#MAP get roomvnum {_param[vnum]};
 
 	#RETURN {@_map_check_exits_vnum{$_param}};
