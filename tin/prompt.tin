@@ -2,6 +2,12 @@
 
 #EVENT {RECEIVED PROMPT}
 {
+	#IF {"%1" == "> " && $GMCP[room][exits_pending]}
+	{
+		#VARIABLE {GMCP[room][exits_pending]} {0};
+		@GMCP_EXITS{};
+	};
+
 	#SCREEN clear square {-1} {1} {-1} {-1};
 	#SHOW {%1} {-1};
 	#LINE gag;

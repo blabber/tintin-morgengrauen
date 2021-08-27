@@ -1,6 +1,7 @@
 #NOP {== GMCP Handling};
 
 #VARIABLE {GMCP[ready]} {0};
+#VARIABLE {GMCP[room][exits_pending]} {0};
 
 #EVENT {IAC WILL GMCP}
 {
@@ -37,9 +38,10 @@
 #EVENT {IAC SB GMCP MG.room.info IAC SE}
 {
 	#VARIABLE {GMCP[room][info]} {%0};
+	#VARIABLE {GMCP[room][exits_pending]} {1};
+
 	@GMCP_PROMPT{};
 	@MAP_CHECK_ROOM_ID{};
-	@_gmcp_exits{};
 };
 
 #EVENT {IAC SB GMCP comm.channel IAC SE}
@@ -152,7 +154,7 @@
 };
 
 
-#FUNCTION {_gmcp_exits}
+#FUNCTION {GMCP_EXITS}
 {
 	#LOCAL {_exit_list} {$GMCP[room][info][exits]};
 	#LOCAL {_exit_count} {0};
