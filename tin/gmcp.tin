@@ -73,7 +73,8 @@
 	#REPLACE {_msg} {;} {°°°};
 	#REPLACE {_msg} {\\n} {;};
 
-	#LOCAL {_line} {};
+	#LOCAL {_line}      {};
+	#LOCAL {_firstline} {1};
 	#FOREACH {$_msg} {_line}
 	{
 		#REPLACE {_line} {°°°} {;};
@@ -87,8 +88,18 @@
 
 		#IF {$_emote}
 		{
-			#FORMAT {_line} {%c%s %s}
-				{$_color} {$_prefix} {$_line};
+			#IF {$_firstline}
+			{
+				#LOCAL {_firstline} {0};
+				#FORMAT {_line} {%c%s %s}
+					{$_color} {$_prefix} {$_line};
+			};
+			#ELSE
+			{
+				#FORMAT {_line} {%c%s}
+					{$_color} {$_line};
+			};
+
 		};
 		#ELSE
 		{
