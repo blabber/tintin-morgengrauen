@@ -263,7 +263,7 @@
 	#IF {!$MAP[in_map]}
 	{
 		#RETURN {$_param[exits]};
-	}
+	};
 
 	#MAP get roomvnum {_param[vnum]};
 
