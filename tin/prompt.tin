@@ -2,11 +2,20 @@
 
 #EVENT {RECEIVED PROMPT}
 {
-	#IF {"%1" == "> " && $GMCP[room][exits_pending]}
+	#IF {"%1" == "> "}
 	{
-		#VARIABLE {GMCP[room][exits_pending]} {0};
-		@GMCP_EXITS{};
+		#IF {$GMCP[room][exits_pending]}
+		{
+			#VARIABLE {GMCP[room][exits_pending]} {0};
+			@GMCP_EXITS{};
+		};
+
+		@MAP_OVERRIDE_NOFOLLOW{0};
 	};
+	#ELSE
+	{
+		@MAP_OVERRIDE_NOFOLLOW{1};
+	}
 
 	#SCREEN clear square {-1} {1} {-1} {-1};
 	#SHOW {%1} {-1};

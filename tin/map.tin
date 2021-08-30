@@ -10,6 +10,8 @@
 #VARIABLE {MAP[in_map]}     {0};
 #VARIABLE {MAP[loaded]}     {0};
 #VARIABLE {MAP[mismatch]}   {1};
+#VARIABLE {MAP[override_nofollow][active]} {0};
+#VARIABLE {MAP[override_nofollow][value]}  {OFF};
 
 #UNPATHDIR {d}  {u}  {32};
 #UNPATHDIR {e}  {w}  {2};
@@ -307,4 +309,49 @@
 	};
 
 	#RETURN {$_exits};
+};
+
+#FUNCTION {MAP_OVERRIDE_NOFOLLOW}
+{
+	#LOCAL {_activate} {%1};
+
+	#IF {$_activate && $MAP[override_nofollow][active]}
+	{
+		#RETURN {#NOP};
+	};
+
+	#IF {!$_activate && !$MAP[override_nofollow][active]}
+	{
+		#RETURN {#NOP};
+	};
+
+	#IF {!$MAP[in_map]}
+	{
+		#RETURN {#NOP};
+	}
+
+	#IF {!$_activate}
+	{
+		#VARIABLE {MAP[override_nofollow][active]} {0};
+		#MAP flag {NoFollow} {$MAP[override_nofollow][value]};
+
+		#RETURN {#NOP};
+	}
+
+	#LOCAL {_lines} {};
+	#LINE quiet #LINE capture {_lines} #MAP flag;
+
+	#LOCAL {_line} {};
+	#FOREACH {$_lines} {_line}
+	{
+		#REGEXP {$_line} {#MAP: NoFollow flag is set to %w.}
+		{
+			#VARIABLE {MAP[override_nofollow][active]} {1};
+			#VARIABLE {MAP[override_nofollow][value]} {&1};
+			#MAP flag {NoFollow} {ON};
+		};
+	}
+
+
+	#RETURN {#NOP};
 };
