@@ -328,7 +328,7 @@
 	#IF {!$MAP[in_map]}
 	{
 		#RETURN {#NOP};
-	}
+	};
 
 	#IF {!$_activate}
 	{
@@ -336,7 +336,7 @@
 		#MAP flag {NoFollow} {$MAP[override_nofollow][value]};
 
 		#RETURN {#NOP};
-	}
+	};
 
 	#LOCAL {_lines} {};
 	#LINE quiet #LINE capture {_lines} #MAP flag;
@@ -350,7 +350,7 @@
 			#VARIABLE {MAP[override_nofollow][value]} {&1};
 			#MAP flag {NoFollow} {ON};
 		};
-	}
+	};
 
 
 	#RETURN {#NOP};
