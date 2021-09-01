@@ -73,10 +73,7 @@
 		#VARIABLE {GMCP[room][info][short]} {};
 		#VARIABLE {GMCP[room][info][id]} {};
 
-		#IF {$SESSION_CONNECTED}
-		{
-			@GMCP_PROMPT{};
-		}
+		@PUBSUB_PUBLISH{map_room_changed};
 	};
 	#VARIABLE {MAP[first_room]} {0};
 
@@ -120,14 +117,14 @@
 	{
 		#IF {$MAP[dirty]}
 		{
-			@MAP_SAVE{Karte aktualisiert (periodisch)};
+			@_map_save{Karte aktualisiert (periodisch)};
 			#SHOW {<020>autosaved current map...};
 			#VARIABLE {MAP[dirty]} {0};
 		};
 	} {$MAP[autosave][seconds]};
 };
 
-#FUNCTION {MAP_SETUP}
+#FUNCTION {_map_setup}
 {
 	#IF {!$MAP[loaded]}
 	{
@@ -145,7 +142,7 @@
 	#RETURN {#NOP};
 };
 
-#FUNCTION {MAP_SAVE}
+#FUNCTION {_map_save}
 {
 	#MAP write {$MAP[file]};
 
@@ -201,7 +198,7 @@
 	#RETURN {0};
 };
 
-#FUNCTION {MAP_CHECK_ROOM_ID}
+#FUNCTION {_map_check_room_id}
 {
 	#VARIABLE {MAP[mismatch]} {1};
 
@@ -258,7 +255,7 @@
 	#RETURN {#NOP};
 };
 
-#FUNCTION {MAP_CHECK_EXITS}
+#FUNCTION {_map_check_exits}
 {
 	#LOCAL {_param[exits]} {%0};
 
@@ -278,7 +275,7 @@
 	#LOCAL {_vnum}  {$_param[vnum]};
 	#LOCAL {_exits} {$_param[exits]};
 
-	#IF {!$MAP[in_map] || $MAP[mismatch] || !$SESSION_CONNECTED}
+	#IF {!$MAP[in_map] || $MAP[mismatch]}
 	{
 		#RETURN {$_exits};
 	};
@@ -311,16 +308,20 @@
 	#RETURN {$_exits};
 };
 
-#FUNCTION {MAP_OVERRIDE_NOFOLLOW}
+#FUNCTION {_map_on_prompt_received}
 {
-	#LOCAL {_activate} {%1};
+	#LOCAL {_override_nofollow} {1};
+	#IF {"%1" == "regular"}
+	{
+		#LOCAL {_override_nofollow} {0};
+	};
 
-	#IF {$_activate && $MAP[override_nofollow][active]}
+	#IF {$_override_nofollow && $MAP[override_nofollow][active]}
 	{
 		#RETURN {#NOP};
 	};
 
-	#IF {!$_activate && !$MAP[override_nofollow][active]}
+	#IF {!$_override_nofollow && !$MAP[override_nofollow][active]}
 	{
 		#RETURN {#NOP};
 	};
@@ -330,7 +331,7 @@
 		#RETURN {#NOP};
 	};
 
-	#IF {!$_activate}
+	#IF {!$_override_nofollow}
 	{
 		#VARIABLE {MAP[override_nofollow][active]} {0};
 		#MAP flag {NoFollow} {$MAP[override_nofollow][value]};
@@ -354,3 +355,101 @@
 
 	#RETURN {#NOP};
 };
+
+#FUNCTION {_map_on_session_disconnected}
+{
+	@_map_save{Karte aktualisiert (Sitzungsende)};
+};
+
+#FUNCTION {_map_exits}
+{
+	#IF {!$GMCP[room][exits_pending]}
+	{
+		#RETURN {#NOP};
+	};
+
+	#VARIABLE {GMCP[room][exits_pending]} {0};
+
+	#LOCAL {_exit_list} {$GMCP[room][info][exits]};
+	#LOCAL {_exit_count} {0};
+
+	#LIST {_exit_list} {size} {_exit_count};
+
+	#IF {$_exit_count == 0 || $_exit_count == 1 && "$_exit_list[1]" == ""}
+	{
+		#LINE ignore #SHOW {<030>Es gibt keine sichtbaren Ausgaenge.<090>};
+
+		#RETURN {#NOP};
+	};
+
+	#LOCAL {_checked_exits} {};
+	#LOCAL {_exit}          {};
+
+	#FOREACH {$_exit_list[%*]} {_exit}
+	{
+		#LOCAL {_checked_exits[$_exit]} {0};
+	};
+
+	#LOCAL {_checked_exits} {@_map_check_exits{$_checked_exits}};
+
+	#IF {$_exit_count == 1}
+	{
+		#LOCAL {_color} {yellow bold};
+		#IF {$_checked_exits[$_exit_list[1]]}
+		{
+			#LOCAL {_color} {yellow};
+		};
+
+		#LINE ignore #ECHO {%cEs gibt einen sichtbaren Ausgang: %c%s%c.}
+				{yellow} {$_color} {$_exit_list[1]} {yellow};
+
+		#RETURN {#NOP};
+	};
+
+	#SWITCH {$_exit_count}
+	{
+		#CASE {2} { #LOCAL {_exit_count_string} {zwei} };
+		#CASE {3} { #LOCAL {_exit_count_string} {drei} };
+		#CASE {4} { #LOCAL {_exit_count_string} {vier} };
+		#CASE {5} { #LOCAL {_exit_count_string} {fuenf} };
+		#CASE {6} { #LOCAL {_exit_count_string} {sechs} };
+		#CASE {7} { #LOCAL {_exit_count_string} {sieben} };
+		#CASE {8} { #LOCAL {_exit_count_string} {acht} };
+		#CASE {9} { #LOCAL {_exit_count_string} {neun} };
+		#DEFAULT  { #LOCAL {_exit_count_string} {$_exit_count} };
+	};
+
+	#LOCAL {_output} {};
+	#FORMAT {_output} {<030>Es gibt %s sichtbare Ausgaenge: }
+		{$_exit_count_string};
+
+	#LOCAL {_i} {0};
+	#LOOP {1} {$_exit_count} {_i}
+	{
+		#SWITCH {$_i}
+		{
+			#CASE {1}            { #NOP };
+			#CASE {$_exit_count} { #FORMAT {_output} {%s und } {$_output} };
+			#DEFAULT             { #FORMAT {_output} {%s, }    {$_output} };
+		};
+
+		#LOCAL {_color} {yellow bold};
+		#IF {$_checked_exits[$_exit_list[$_i]]}
+		{
+			#LOCAL {_color} {yellow};
+		};
+
+		#FORMAT {_output} {%s%c%s%c} {$_output} {$_color} {$_exit_list[$_i]} {yellow};
+	};
+
+	#FORMAT {_output} {%s.} {$_output};
+
+	#LINE ignore #SHOW {$_output};
+	#RETURN {#NOP};
+};
+
+@PUBSUB_SUBSCRIBE{screen_changed;       _map_setup};
+@PUBSUB_SUBSCRIBE{prompt_received;      _map_on_prompt_received};
+@PUBSUB_SUBSCRIBE{session_disconnected; _map_on_session_disconnected};
+@PUBSUB_SUBSCRIBE{gmcp_room_received;   _map_check_room_id};
+@PUBSUB_SUBSCRIBE{prompt_received;      _map_exits};

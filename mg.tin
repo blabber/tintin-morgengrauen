@@ -1,5 +1,6 @@
 #NOP {== Konfiguration zum normalen Spielen};
 
+#READ {tin/pubsub.tin};
 #READ {tin/config.tin};
 #READ {tin/comms.tin};
 #READ {tin/gmcp.tin};

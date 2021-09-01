@@ -4,8 +4,6 @@
 #NOP {LOGIN_* Variablen in login.tin belegen!};
 #READ {tin/login.tin};
 
-#VARIABLE {SESSION_CONNECTED} {0};
-
 #IF {"$LOGIN_NAME" != ""}
 {
 	#ACTION {Wie heisst Du denn ("neu" fuer neuen Spieler)?}
@@ -29,12 +27,12 @@
 #EVENT {SESSION CONNECTED}
 {
 	#CONFIG {COMMAND COLOR} {\e[1;34m};
-	#VARIABLE {SESSION_CONNECTED} {1};
+	#UNEVENT {SESSION CONNECTED};
 };
 
 #EVENT {SESSION DISCONNECTED}
 {
-	@MAP_SAVE{Karte aktualisiert (Sitzungsende)};
+	@PUBSUB_PUBLISH{session_disconnected};
 	#UNEVENT {SESSION DISCONNECTED};
 	#END
 };

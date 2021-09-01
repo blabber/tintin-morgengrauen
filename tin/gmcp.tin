@@ -26,13 +26,13 @@
 #EVENT {IAC SB GMCP MG.char.vitals IAC SE}
 {
 	#VARIABLE {GMCP[char][vitals]} {%0};
-	@GMCP_PROMPT{};
+	@_gmcp_prompt{};
 };
 
 #EVENT {IAC SB GMCP MG.char.maxvitals IAC SE}
 {
 	#VARIABLE {GMCP[char][maxvitals]} {%0};
-	@GMCP_PROMPT{};
+	@_gmcp_prompt{};
 };
 
 #EVENT {IAC SB GMCP MG.room.info IAC SE}
@@ -40,8 +40,8 @@
 	#VARIABLE {GMCP[room][info]} {%0};
 	#VARIABLE {GMCP[room][exits_pending]} {1};
 
-	@GMCP_PROMPT{};
-	@MAP_CHECK_ROOM_ID{};
+	@_gmcp_prompt{};
+	@PUBSUB_PUBLISH{gmcp_room_received};
 };
 
 #EVENT {IAC SB GMCP comm.channel IAC SE}
@@ -109,13 +109,11 @@
 
 		#SHOW {$_line};
 
-		@COMMS_ADD_LINE{$_line};
+		@PUBSUB_PUBLISH{gmcp_comms_received; {$_line}};
 	};
-
-	@COMMS_DISPLAY{};
 };
 
-#FUNCTION {GMCP_PROMPT}
+#FUNCTION {_gmcp_prompt}
 {
 	#IF {!$GMCP[ready]}
 	{
@@ -164,83 +162,5 @@
 	#RETURN {#NOP};
 };
 
-
-#FUNCTION {GMCP_EXITS}
-{
-	#LOCAL {_exit_list} {$GMCP[room][info][exits]};
-	#LOCAL {_exit_count} {0};
-
-	#LIST {_exit_list} {size} {_exit_count};
-
-	#IF {$_exit_count == 0 || $_exit_count == 1 && "$_exit_list[1]" == ""}
-	{
-		#LINE ignore #SHOW {<030>Es gibt keine sichtbaren Ausgaenge.<090>};
-
-		#RETURN {#NOP};
-	};
-
-	#LOCAL {_checked_exits} {};
-	#LOCAL {_exit}          {};
-
-	#FOREACH {$_exit_list[%*]} {_exit}
-	{
-		#LOCAL {_checked_exits[$_exit]} {0};
-	};
-
-	#LOCAL {_checked_exits} {@MAP_CHECK_EXITS{$_checked_exits}};
-
-	#IF {$_exit_count == 1}
-	{
-		#LOCAL {_color} {yellow bold};
-		#IF {$_checked_exits[$_exit_list[1]]}
-		{
-			#LOCAL {_color} {yellow};
-		};
-
-		#LINE ignore #ECHO {%cEs gibt einen sichtbaren Ausgang: %c%s%c.}
-				{yellow} {$_color} {$_exit_list[1]} {yellow};
-
-		#RETURN {#NOP};
-	};
-
-	#SWITCH {$_exit_count}
-	{
-		#CASE {2} { #LOCAL {_exit_count_string} {zwei} };
-		#CASE {3} { #LOCAL {_exit_count_string} {drei} };
-		#CASE {4} { #LOCAL {_exit_count_string} {vier} };
-		#CASE {5} { #LOCAL {_exit_count_string} {fuenf} };
-		#CASE {6} { #LOCAL {_exit_count_string} {sechs} };
-		#CASE {7} { #LOCAL {_exit_count_string} {sieben} };
-		#CASE {8} { #LOCAL {_exit_count_string} {acht} };
-		#CASE {9} { #LOCAL {_exit_count_string} {neun} };
-		#DEFAULT  { #LOCAL {_exit_count_string} {$_exit_count} };
-	};
-
-	#LOCAL {_output} {};
-	#FORMAT {_output} {<030>Es gibt %s sichtbare Ausgaenge: }
-		{$_exit_count_string};
-
-	#LOCAL {_i} {0};
-	#LOOP {1} {$_exit_count} {_i}
-	{
-		#SWITCH {$_i}
-		{
-			#CASE {1}            { #NOP };
-			#CASE {$_exit_count} { #FORMAT {_output} {%s und } {$_output} };
-			#DEFAULT             { #FORMAT {_output} {%s, }    {$_output} };
-		};
-
-		#LOCAL {_color} {yellow bold};
-		#IF {$_checked_exits[$_exit_list[$_i]]}
-		{
-			#LOCAL {_color} {yellow};
-		};
-
-		#FORMAT {_output} {%s%c%s%c} {$_output} {$_color} {$_exit_list[$_i]} {yellow};
-	};
-
-	#FORMAT {_output} {%s.} {$_output};
-
-	#LINE ignore #SHOW {$_output};
-	#RETURN {#NOP};
-};
+@PUBSUB_SUBSCRIBE{screen_changed;   _gmcp_prompt};
+@PUBSUB_SUBSCRIBE{map_room_changed; _gmcp_prompt};

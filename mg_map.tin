@@ -1,5 +1,6 @@
 #NOP {== Konfiguration zum Bearbeiten von Karten};
 
+#READ {tin/pubsub.tin};
 #READ {tin/config.tin};
 #READ {tin/map.tin};
 #READ {tin/screen.tin};
@@ -21,5 +22,5 @@ kartografie an;
 
 #EVENT {PROGRAM TERMINATION}
 {
-	@MAP_SAVE{};
+	@PUBSUB_PUBLISH{session_disconnected};
 };

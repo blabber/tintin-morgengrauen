@@ -91,13 +91,7 @@
 		#VARIABLE {SCREEN[comms][lr][x]} {0};
 	};
 
-	@MAP_SETUP{};
-
-	#IF {$SESSION_CONNECTED}
-	{
-		@COMMS_DISPLAY{};
-		@GMCP_PROMPT{};
-	};
+	@PUBSUB_PUBLISH{screen_changed};
 
 	#BUFFER {end};
 };

@@ -11,7 +11,7 @@
 	#RETURN {#NOP};
 };
 
-#FUNCTION {COMMS_ADD_LINE}
+#FUNCTION {_comms_add_line}
 {
 	#LOCAL {_line} {%1};
 
@@ -29,10 +29,12 @@
 		#LIST {COMMS[buffer]} {delete} {1};
 	};
 
+	@_comms_display{};
+
 	#RETURN {#NOP};
 };
 
-#FUNCTION {COMMS_DISPLAY}
+#FUNCTION {_comms_display}
 {
 	#IF {$SCREEN[comms][ul][y] == 0}
 	{
@@ -72,32 +74,31 @@
 {
 	#LOCAL  {_line} {};
 	#FORMAT {_line} {%c%s teilt Dir mit:%c %s} {light green} {%1} {reset} {%2};
-	@COMMS_ADD_LINE{$_line};
-	@COMMS_DISPLAY{};
+	@_comms_add_line{$_line};
 };
 
 #ACTION {Du teilst %1 mit: %2}
 {
 	#LOCAL  {_line} {};
 	#FORMAT {_line} {%cDu teilst %s mit:%c %s} {light green} {%1} {reset} {%2};
-	@COMMS_ADD_LINE{$_line};
-	@COMMS_DISPLAY{};
+	@_comms_add_line{$_line};
 };
 
 #ACTION {Du rufst: %1}
 {
 	#LOCAL  {_line} {};
 	#FORMAT {_line} {%cDu rufst:%c %s} {light yellow} {reset} {%1};
-	@COMMS_ADD_LINE{$_line};
-	@COMMS_DISPLAY{};
+	@_comms_add_line{$_line};
 };
 
 #ACTION {%1 ruft: %2}
 {
 	#LOCAL  {_line} {};
 	#FORMAT {_line} {%c%s ruft:%c %s} {light yellow} {%1} {reset} {%2};
-	@COMMS_ADD_LINE{$_line};
-	@COMMS_DISPLAY{};
+	@_comms_add_line{$_line};
 };
 
 @_comms_init{};
+
+@PUBSUB_SUBSCRIBE{screen_changed;      _comms_display};
+@PUBSUB_SUBSCRIBE{gmcp_comms_received; _comms_add_line};

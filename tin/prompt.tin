@@ -4,18 +4,14 @@
 {
 	#IF {"%1" == "> "}
 	{
-		#IF {$GMCP[room][exits_pending]}
-		{
-			#VARIABLE {GMCP[room][exits_pending]} {0};
-			@GMCP_EXITS{};
-		};
-
-		@MAP_OVERRIDE_NOFOLLOW{0};
+		#LOCAL {_prompt_mode} {regular};
 	};
 	#ELSE
 	{
-		@MAP_OVERRIDE_NOFOLLOW{1};
-	}
+		#LOCAL {_prompt_mode} {other};
+	};
+
+	@PUBSUB_PUBLISH{prompt_received; $_prompt_mode};
 
 	#SCREEN clear square {-1} {1} {-1} {-1};
 	#SHOW {%1} {-1};
