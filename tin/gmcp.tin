@@ -109,7 +109,7 @@
 
 		#SHOW {$_line};
 
-		@PUBSUB_PUBLISH{gmcp_comms_received; {$_line}};
+		@PUBSUB_PUBLISH{gmcp_comms_received; {{$_line}}};
 	};
 };
 

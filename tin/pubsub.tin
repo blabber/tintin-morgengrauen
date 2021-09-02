@@ -31,7 +31,7 @@
 
 	#FOREACH {$_callbacks} {_callback}
 	{
-		@{$_callback}{{%2}};
+		@{$_callback}{%2};
 	};
 
 	#RETURN {#NOP};

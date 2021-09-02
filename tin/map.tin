@@ -10,6 +10,9 @@
 #VARIABLE {MAP[in_map]}     {0};
 #VARIABLE {MAP[loaded]}     {0};
 #VARIABLE {MAP[mismatch]}   {1};
+#VARIABLE {MAP[center][x]}  {0};
+#VARIABLE {MAP[center][y]}  {0};
+#VARIABLE {MAP[center][z]}  {0};
 #VARIABLE {MAP[override_nofollow][active]} {0};
 #VARIABLE {MAP[override_nofollow][value]}  {OFF};
 
@@ -448,8 +451,36 @@
 	#RETURN {#NOP};
 };
 
+#FUNCTION {_map_offset}
+{
+	#LOCAL {_x} {%1};
+	#LOCAL {_y} {%2};
+	#LOCAL {_z} {%3};
+
+	#IF {$_x == 0 && $_y == 0 && $_z == 0}
+	{
+
+		#VARIABLE {MAP[center][x]} {0};
+		#VARIABLE {MAP[center][y]} {0};
+		#VARIABLE {MAP[center][z]} {0};
+
+		#MAP center {0} {0} {0};
+
+		#RETURN {#NOP};
+	};
+
+	#MATH {MAP[center][x]} {$MAP[center][x] + $_x};
+	#MATH {MAP[center][y]} {$MAP[center][y] + $_y};
+	#MATH {MAP[center][z]} {$MAP[center][z] + $_z};
+
+	#MAP center {$MAP[center][x]} {$MAP[center][y]} {$MAP[center][z]};
+
+	#RETURN {#NOP};
+};
+
 @PUBSUB_SUBSCRIBE{screen_changed;       _map_setup};
 @PUBSUB_SUBSCRIBE{prompt_received;      _map_on_prompt_received};
 @PUBSUB_SUBSCRIBE{session_disconnected; _map_on_session_disconnected};
 @PUBSUB_SUBSCRIBE{gmcp_room_received;   _map_check_room_id};
 @PUBSUB_SUBSCRIBE{prompt_received;      _map_exits};
+@PUBSUB_SUBSCRIBE{macro_mapoffset;      _map_offset};

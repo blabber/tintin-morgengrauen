@@ -13,6 +13,7 @@ Features
 
 * verschiedene Layouts (siehe unten)
 * Hervorhebungen für noch nicht kartografierte sichtbare Ausgänge
+* scrollbare Karte
 * Hervorhebungen für Räume mit nicht kartografierten sichtbaren Ausgängen
   * wird beim Betreten und Verlassen eines Raums aktualisiert
 * automatisches Ersetzen von Umlauten
@@ -145,8 +146,10 @@ ausgehe das jeder eine solche Konfiguration einsetzt, und die Gefahr von
 Informationsverlust besteht, enthält diese Karte den Stub einer ASCII Karte
 (`#map flag asciigraphics`).
 
-Vereinfachte Navigation
------------------------
+Tastenkürzel
+------------
+
+### Bewegung
 
 Makro | Bewegung
 ----- | --------
@@ -164,6 +167,18 @@ Strg-↓ Strg-→ | `so`
 Strg-→ Strg-↓ | `so`
 Strg-Bild↑ Strg-Bild↑ | `ob`
 Strg-Bild↓ Strg-Bild↓ | `u`
+
+### Karte
+
+Makro | Bewegung
+----- | --------
+Alt-← | Kartenausschnitt nach Westen verschieben
+Alt-→ | Kartenausschnitt nach Osten verschieben
+Alt-↑ | Kartenausschnitt nach Norden verschieben
+Alt-↓ | Kartenausschnitt nach Süden verschieben
+Alt-Bild↑ | Kartenausschnitt eine Höhenebene nach oben
+Alt-Bild↓ | Kartenausschnitt eine Höhenebene nach unten
+Alt-z | Kartenausschnitt auf den Spieler zentrieren
 
 Wie ich spiele
 --------------

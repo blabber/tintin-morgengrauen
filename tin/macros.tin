@@ -16,18 +16,34 @@
 #MACRO {\e[5^\e[5^} {ob};
 #MACRO {\e[6^\e[6^} {u};
 
+#MACRO {\e\e[C}  {@PUBSUB_PUBLISH{macro_mapoffset; {-1;  0;  0}}};
+#MACRO {\e\e[D}  {@PUBSUB_PUBLISH{macro_mapoffset; { 1;  0;  0}}};
+#MACRO {\e\e[A}  {@PUBSUB_PUBLISH{macro_mapoffset; { 0; -1;  0}}};
+#MACRO {\e\e[B}  {@PUBSUB_PUBLISH{macro_mapoffset; { 0;  1;  0}}};
+#MACRO {\e\e[5~} {@PUBSUB_PUBLISH{macro_mapoffset; { 0;  0; -1}}};
+#MACRO {\e\e[6~} {@PUBSUB_PUBLISH{macro_mapoffset; { 0;  0;  1}}};
+#MACRO {\ez}     {@PUBSUB_PUBLISH{macro_mapoffset; { 0;  0;  0}}};
+
 #NOP { Makros für xterm/tmux };
-#MACRO {\e[1;5A\e[1;5A} {n}
-#MACRO {\e[1;5B\e[1;5B} {s}
-#MACRO {\e[1;5D\e[1;5D} {w}
-#MACRO {\e[1;5C\e[1;5C} {o}
-#MACRO {\e[1;5A\e[1;5D} {nw}
-#MACRO {\e[1;5D\e[1;5A} {nw}
-#MACRO {\e[1;5A\e[1;5C} {no}
-#MACRO {\e[1;5C\e[1;5A} {no}
-#MACRO {\e[1;5B\e[1;5D} {sw}
-#MACRO {\e[1;5D\e[1;5B} {sw}
-#MACRO {\e[1;5B\e[1;5C} {so}
-#MACRO {\e[1;5C\e[1;5B} {so}
-#MACRO {\e[5;5~\e[5;5~} {ob}
-#MACRO {\e[6;5~\e[6;5~} {u}
+#MACRO {\e[1;5A\e[1;5A} {n};
+#MACRO {\e[1;5B\e[1;5B} {s};
+#MACRO {\e[1;5D\e[1;5D} {w};
+#MACRO {\e[1;5C\e[1;5C} {o};
+#MACRO {\e[1;5A\e[1;5D} {nw};
+#MACRO {\e[1;5D\e[1;5A} {nw};
+#MACRO {\e[1;5A\e[1;5C} {no};
+#MACRO {\e[1;5C\e[1;5A} {no};
+#MACRO {\e[1;5B\e[1;5D} {sw};
+#MACRO {\e[1;5D\e[1;5B} {sw};
+#MACRO {\e[1;5B\e[1;5C} {so};
+#MACRO {\e[1;5C\e[1;5B} {so};
+#MACRO {\e[5;5~\e[5;5~} {ob}:
+#MACRO {\e[6;5~\e[6;5~} {u};
+
+#MACRO {\e[1;3C} {@PUBSUB_PUBLISH{macro_mapoffset; {-1;  0;  0}}};
+#MACRO {\e[1;3D} {@PUBSUB_PUBLISH{macro_mapoffset; { 1;  0;  0}}};
+#MACRO {\e[1;3A} {@PUBSUB_PUBLISH{macro_mapoffset; { 0; -1;  0}}};
+#MACRO {\e[1;3B} {@PUBSUB_PUBLISH{macro_mapoffset; { 0;  1;  0}}};
+#MACRO {\e[5;3~} {@PUBSUB_PUBLISH{macro_mapoffset; { 0;  0; -1}}};
+#MACRO {\e[6;3~} {@PUBSUB_PUBLISH{macro_mapoffset; { 0;  0;  1}}};
+#MACRO {ú}       {@PUBSUB_PUBLISH{macro_mapoffset; { 0;  0;  0}}};
