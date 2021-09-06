@@ -1,13 +1,7 @@
 #NOP {== Konfiguration zum normalen Spielen};
 
-#READ {tin/pubsub.tin};
-#READ {tin/config.tin};
-#READ {tin/comms.tin};
-#READ {tin/gmcp.tin};
-#READ {tin/highlights.tin};
-#READ {tin/session.tin};
-#READ {tin/map.tin};
-#READ {tin/screen.tin};
-#READ {tin/prompt.tin};
-#READ {tin/umlauts.tin};
-#READ {tin/macros.tin};
+
+#EVENT {PROGRAM START}
+{
+	#SSL {mg} {mg.mud.de} {4712} {tin/all.tin};
+};

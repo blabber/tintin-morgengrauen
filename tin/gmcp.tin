@@ -1,6 +1,5 @@
 #NOP {== GMCP Handling};
 
-#VARIABLE {GMCP[ready]} {0};
 #VARIABLE {GMCP[room][exits_pending]} {0};
 
 #EVENT {IAC WILL GMCP}
@@ -19,8 +18,6 @@
 	#SEND {$_telnet[IAC]$_telnet[DO]$_telnet[GMCP]\};
 	#SEND {$_telnet[IAC]$_telnet[SB]$_telnet[GMCP]Core.Hello { "client": "$info[SYSTEM][CLIENT_NAME]", "version": "$info[SYSTEM][CLIENT_VERSION]" }$_telnet[IAC]$_telnet[SE]\};
 	#SEND {$_telnet[IAC]$_telnet[SB]$_telnet[GMCP]Core.Supports.Set [ "MG.char 1", "MG.room 1", "comm.channel 1" ]$_telnet[IAC]$_telnet[SE]\};
-
-	#VARIABLE {GMCP[ready]} {1};
 };
 
 #EVENT {IAC SB GMCP MG.char.vitals IAC SE}
@@ -115,11 +112,6 @@
 
 #FUNCTION {_gmcp_prompt}
 {
-	#IF {!$GMCP[ready]}
-	{
-		#RETURN {#NOP};
-	};
-
 	#LOCAL {_hp}     {$GMCP[char][vitals][hp]};
 	#LOCAL {_sp}     {$GMCP[char][vitals][sp]};
 	#LOCAL {_poison} {$GMCP[char][vitals][poison]};
