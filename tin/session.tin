@@ -1,27 +1,20 @@
-#VARIABLE {LOGIN_NAME} {};
-#VARIABLE {LOGIN_PASSWORT} {};
+#NOP {Zugangsdaten werden als LOGIN_* Variablen in login.tin gesetzt!};
 
-#NOP {LOGIN_* Variablen in login.tin belegen!};
-#READ {tin/login.tin};
-
-#IF {"$LOGIN_NAME" != ""}
+#ACTION {^Wie heisst Du denn ("neu" fuer neuen Spieler)?}
 {
-	#ACTION {Wie heisst Du denn ("neu" fuer neuen Spieler)?}
+	#READ {tin/login.tin};
+	#IF {"$LOGIN_NAME" != ""}
 	{
 		#SEND {$LOGIN_NAME};
-		#UNACTION {Wie heisst Du denn ("neu" fuer neuen Spieler)?};
-		#UNVARIABLE {LOGIN_NAME};
 	};
-};
 
-#IF {"$_LOGIN_PASSWORT" != ""}
-{
-	#ACTION {Passwort:}
+	#IF {"$LOGIN_PASSWORT" != ""}
 	{
 		#SEND {$LOGIN_PASSWORT};
-		#UNACTION {Passwort:};
-		#UNVARIABLE {LOGIN_PASSWORT};
 	};
+
+	#UNVARIABLE {LOGIN_NAME};
+	#UNVARIABLE {LOGIN_PASSWORT};
 };
 
 #EVENT {SESSION DISCONNECTED}

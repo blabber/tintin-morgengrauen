@@ -14,6 +14,6 @@
 	@PUBSUB_PUBLISH{prompt_received; $_prompt_mode};
 
 	#SCREEN clear square {-1} {1} {-1} {-1};
-	#SHOW {%1} {-1};
+	#LINE ignore #SHOW {%1} {-1};
 	#LINE gag;
 };
