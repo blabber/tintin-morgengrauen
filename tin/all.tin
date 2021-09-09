@@ -11,3 +11,4 @@
 #READ {tin/prompt.tin};
 #READ {tin/umlauts.tin};
 #READ {tin/macros.tin};
+#READ {tin/autoaway.tin};

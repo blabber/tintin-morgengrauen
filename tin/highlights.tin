@@ -39,3 +39,6 @@
 #HIGHLIGHT {{^Du rufst:}} {light yellow};
 
 #HIGHLIGHT {{^Wie bitte\?}} {light red};
+
+#HIGHLIGHT {{^Du bist jetzt als abwesend gekennzeichnet\.}} {yellow};
+#HIGHLIGHT {{^Du bist nicht mehr als abwesend gekennzeichnet\.}} {yellow};

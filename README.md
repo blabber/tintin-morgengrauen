@@ -28,6 +28,7 @@ Features
 Die folgenden Features sind optional:
 
 * automatisches Login
+* automatisches Kennzeichnen als "abwesend" bei längerer Inaktivität
 * periodisches Speichern des aktuellen Zustand der Karte
    * Versionierung der Karte mit git
 

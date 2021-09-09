@@ -1,6 +1,7 @@
-#NOP { Der Timeout, nachdem der aktuelle Zustand der Karte gespeichert werden };
-#NOP { soll. Ein Wert von 0 deaktiviert das periodische automatische          };
-#NOP { Speichern. Bei Sitzungsende wird weiterhin die Karte gespeichert.      };
+#NOP { Der Timeout in Sekunden, nach dem der aktuelle Zustand der Karte       };
+#NOP { gespeichert werden soll. Ein Wert von 0 deaktiviert das periodische    };
+#NOP { automatische Speichern. Bei Sitzungsende wird weiterhin die Karte      };
+#NOP { gespeichert.                                                           };
 #VARIABLE {MAP[autosave][seconds]} {0};
 
 #NOP { Ein Wert, der angibt ob beim Speichern der Zustand der Karte in das    };
@@ -8,6 +9,16 @@
 #NOP { CAVE: Dieses Feature kann nur in un*x-artigen Umgebungen verwendet     };
 #NOP { werden (und setzt offensichtlich ein installiertes git im Pfad voraus. };
 #VARIABLE {MAP[autosave][git]} {0};
+
+#NOP { Der Timeout in Sekunden, nach dem du als abwesend gekennzeichnet       };
+#NOP { wirst. Der Timer wird jedesmal zurückgesetzt, wenn du eine Eingabe     };
+#NOP { vornimmst. Ein Wert von 0 deaktiviert die automatische Kennzeichnung   };
+#NOP { als abwesend.                                                          };
+#VARIABLE {AUTOAWAY[seconds]} {0};
+
+#NOP { Die Abwesenheitsmeldung die verwendet werden soll, wenn du automatisch };
+#NOP { als abwesend gekennzeichnet wurdest.                                   };
+#VARIABLE {AUTOAWAY[message]} {Ich bin gerade nicht da.};
 
 #NOP { Allgemeine TinTin++ Konfiguration};
 

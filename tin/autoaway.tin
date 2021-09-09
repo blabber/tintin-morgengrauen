@@ -1,0 +1,39 @@
+#NOP {== Bei Inaktivität automatisch als abwesend kennzeichnen};
+
+#VARIABLE {AUTOAWAY[away]} {0};
+
+#NOP {Die folgenden Variablen werden in tin/config.tin deklariert};
+#NOP #VARIABLE {AUTOAWAY[seconds]} {0};
+#NOP #VARIABLE {AUTOAWAY[message]} {Ich bin gerade nicht da.};
+
+#FUNCTION {_reset_timer}
+{
+	#IF {$AUTOAWAY[seconds] > 0}
+	{
+		#TICKER {autoaway}
+		{
+			#IF {$AUTOAWAY[away]}
+			{
+				#RETURN;
+			}
+
+			#SEND {weg $AUTOAWAY[message]};
+			#VARIABLE {AUTOAWAY[away]} {1};
+		} {$AUTOAWAY[seconds]};
+	};
+
+	#RETURN {#NOP};
+};
+
+#EVENT {RECEIVED INPUT}
+{
+	#IF {$AUTOAWAY[away]}
+	{
+		#VARIABLE {AUTOAWAY[away]} {0};
+		#SEND {weg};
+	};
+
+	@_reset_timer{};
+};
+
+@_reset_timer{};
