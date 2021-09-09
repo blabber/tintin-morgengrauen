@@ -17,7 +17,7 @@ Features
 * Hervorhebungen für Räume mit nicht kartografierten sichtbaren Ausgängen
   * wird beim Betreten und Verlassen eines Raums aktualisiert
 * automatisches Ersetzen von Umlauten
-* [GMPC](http://mg.mud.de/cgi-bin/mgn-doc-search?help/GMCP) Integration
+* [GMCP](http://mg.mud.de/cgi-bin/mgn-doc-search?help/GMCP) Integration
   * Vitalwerte in der Statusleiste
   * Kurzbeschreibung des Raums in der Statusleiste
   * Mitführen der Raum ID in der Karte und entsprechende Hinweise, wenn
