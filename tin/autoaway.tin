@@ -8,7 +8,7 @@
 
 #IF {$AUTOAWAY[seconds] > 0}
 {
-	#FUNCTION {_reset_timer}
+	#FUNCTION {_autoaway_reset_timer}
 	{
 		#TICKER {autoaway}
 		{
@@ -32,8 +32,10 @@
 			#SEND {weg};
 		};
 
-		@_reset_timer{};
+		@_autoaway_reset_timer{};
 	};
 
-	@_reset_timer{};
+	@_autoaway_reset_timer{};
+
+	@PUBSUB_SUBSCRIBE{map_room_changed; _autoaway_reset_timer};
 };
