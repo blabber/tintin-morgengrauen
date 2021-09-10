@@ -6,9 +6,9 @@
 #NOP #VARIABLE {AUTOAWAY[seconds]} {0};
 #NOP #VARIABLE {AUTOAWAY[message]} {Ich bin gerade nicht da.};
 
-#FUNCTION {_reset_timer}
+#IF {$AUTOAWAY[seconds] > 0}
 {
-	#IF {$AUTOAWAY[seconds] > 0}
+	#FUNCTION {_reset_timer}
 	{
 		#TICKER {autoaway}
 		{
@@ -20,20 +20,20 @@
 			#SEND {weg $AUTOAWAY[message]};
 			#VARIABLE {AUTOAWAY[away]} {1};
 		} {$AUTOAWAY[seconds]};
+
+		#RETURN {#NOP};
 	};
 
-	#RETURN {#NOP};
-};
-
-#EVENT {RECEIVED INPUT}
-{
-	#IF {$AUTOAWAY[away]}
+	#EVENT {RECEIVED INPUT}
 	{
-		#VARIABLE {AUTOAWAY[away]} {0};
-		#SEND {weg};
+		#IF {$AUTOAWAY[away]}
+		{
+			#VARIABLE {AUTOAWAY[away]} {0};
+			#SEND {weg};
+		};
+
+		@_reset_timer{};
 	};
 
 	@_reset_timer{};
 };
-
-@_reset_timer{};
