@@ -118,7 +118,7 @@
 
 	#LOCAL {_max_hp}     {$GMCP[char][maxvitals][max_hp]};
 	#LOCAL {_max_sp}     {$GMCP[char][maxvitals][max_sp]};
-	#LOCAL {_max_poison} {$GMCP[char][vitals][max_poison]};
+	#LOCAL {_max_poison} {$GMCP[char][maxvitals][max_poison]};
 
 	#LOCAL {_room}       {$GMCP[room][info][short]};
 	#LOCAL {_domain}     {$GMCP[room][info][domain]};
