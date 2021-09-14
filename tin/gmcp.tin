@@ -32,6 +32,12 @@
 	@_gmcp_prompt{};
 };
 
+#EVENT {IAC SB GMCP MG.char.wimpy IAC SE}
+{
+	#VARIABLE {GMCP[char][wimpy]} {%0};
+	@_gmcp_prompt{};
+};
+
 #EVENT {IAC SB GMCP MG.room.info IAC SE}
 {
 	#VARIABLE {GMCP[room][info]} {%0};
@@ -115,6 +121,7 @@
 	#LOCAL {_hp}     {$GMCP[char][vitals][hp]};
 	#LOCAL {_sp}     {$GMCP[char][vitals][sp]};
 	#LOCAL {_poison} {$GMCP[char][vitals][poison]};
+	#LOCAL {_wimpy}  {$GMCP[char][wimpy][wimpy]};
 
 	#LOCAL {_max_hp}     {$GMCP[char][maxvitals][max_hp]};
 	#LOCAL {_max_sp}     {$GMCP[char][maxvitals][max_sp]};
@@ -131,8 +138,17 @@
 	#IF {"$_sp" != ""}
 	{
 		#FORMAT {_prompt}
-			{%sSP: <190>%+2s<090>/%s | }
+			{%sSP: <190>%+2s<090>/%s }
 			{$_prompt} {$_sp} {$_max_sp};
+
+		#IF {"$_wimpy" != ""}
+		{
+			#FORMAT {_prompt}
+				{%s(%s) }
+				{$_prompt} {$_wimpy};
+		};
+
+		#CAT {_prompt} {| };
 	};
 
 	#if {"$_poison" != ""}
