@@ -132,23 +132,23 @@
 
 	#LOCAL {_prompt} {};
 	#FORMAT {_prompt}
-		{<090>= %sHP: <190>%+2s<090>/%s | }
+		{<090>= %sHP: <190>%+2s<090>/%s }
 		{$_prompt} {$_hp} {$_max_hp};
+
+	#IF {"$_wimpy" != ""}
+	{
+		#FORMAT {_prompt}
+			{%s(%s) }
+			{$_prompt} {$_wimpy};
+	};
+
+	#CAT {_prompt} {| };
 
 	#IF {"$_sp" != ""}
 	{
 		#FORMAT {_prompt}
-			{%sSP: <190>%+2s<090>/%s }
+			{%sSP: <190>%+2s<090>/%s | }
 			{$_prompt} {$_sp} {$_max_sp};
-
-		#IF {"$_wimpy" != ""}
-		{
-			#FORMAT {_prompt}
-				{%s(%s) }
-				{$_prompt} {$_wimpy};
-		};
-
-		#CAT {_prompt} {| };
 	};
 
 	#if {"$_poison" != ""}
