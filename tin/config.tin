@@ -23,3 +23,4 @@
 #NOP { Allgemeine TinTin++ Konfiguration};
 
 #CONFIG {COMMAND COLOR} {\e[1;34m};
+#CONFIG {MOUSE} 	{ON};

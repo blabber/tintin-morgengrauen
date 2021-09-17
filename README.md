@@ -14,6 +14,11 @@ Features
 * verschiedene Layouts (siehe unten)
 * Hervorhebungen für noch nicht kartografierte sichtbare Ausgänge
 * scrollbare Karte
+* teilweise Mausunterstützung
+  * beim Anklicken eines Raums in der Karte, wird sich der Charakter dorthin
+    bewegen (es sei denn es existiert kein Weg)
+  * die sichtbaren Ausgänge können angeklickt werden und der Charakter wird
+    sich entsprechend bewegen
 * Hervorhebungen für Räume mit nicht kartografierten sichtbaren Ausgängen
   * wird beim Betreten und Verlassen eines Raums aktualisiert
 * automatisches Ersetzen von Umlauten

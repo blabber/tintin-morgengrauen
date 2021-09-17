@@ -403,7 +403,7 @@
 			#LOCAL {_color} {yellow};
 		};
 
-		#LINE ignore #ECHO {%cEs gibt einen sichtbaren Ausgang: %c%s%c.}
+		#LINE ignore #ECHO {%cEs gibt einen sichtbaren Ausgang: %c\e[4m%s\e[24m%c.}
 				{yellow} {$_color} {$_exit_list[1]} {yellow};
 
 		#RETURN {#NOP};
@@ -442,7 +442,8 @@
 			#LOCAL {_color} {yellow};
 		};
 
-		#FORMAT {_output} {%s%c%s%c} {$_output} {$_color} {$_exit_list[$_i]} {yellow};
+		#FORMAT {_output} {%s%c\e[4m%s\e[24m%c}
+			{$_output} {$_color} {$_exit_list[$_i]} {yellow};
 	};
 
 	#FORMAT {_output} {%s.} {$_output};
@@ -476,6 +477,24 @@
 	#MAP center {$MAP[center][x]} {$MAP[center][y]} {$MAP[center][z]};
 
 	#RETURN {#NOP};
+};
+
+#EVENT {PRESSED LINK MOUSE BUTTON ONE}
+{
+	%4;
+};
+
+#EVENT {MAP ROOM SHORT-CLICKED MOUSE BUTTON ONE}
+{
+	#LOCAL {_vnum}      {%4};
+
+	#LOCAL {_current_vnum} {};
+	#MAP get roomvnum {_current_vnum};
+
+	#IF {$_current_vnum != $_vnum}
+	{
+		#MAP run {$_vnum} {0.25};
+	};
 };
 
 @PUBSUB_SUBSCRIBE{screen_changed;       _map_setup};
