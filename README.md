@@ -114,6 +114,21 @@ aktuellen `origin/main` rebasen:
     git fetch
     git rebase origin/main
 
+### Notwendige Aktionen im MorgenGrauen
+
+Im MUD selber sollten folgende Befehle einmal ausgeführt werden:
+
+    ausgaenge auto
+    report ein
+    report vorsicht
+
+Damit werden folgende Änderungen vorgenommen:
+
+1. Die automatische Anzeige der sichtbaren Ausgänge durch den Server wird
+   deaktiviert. Diese Konfiguration erstellt selber eine Liste der sichtbaren
+   Ausgänge (um die nicht kartografierten Ausgänge hervorheben zu können).
+2. Die Übermittlung der Vitalwerte per GMCP wird aktiviert.
+
 Hinweise zur Karte
 ------------------
 
