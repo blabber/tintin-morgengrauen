@@ -373,18 +373,7 @@
 
 	#VARIABLE {GMCP[room][exits_pending]} {0};
 
-	#LOCAL {_exit_list} {$GMCP[room][info][exits]};
-	#LOCAL {_exit_count} {0};
-
-	#LIST {_exit_list} {size} {_exit_count};
-
-	#IF {$_exit_count == 0 || $_exit_count == 1 && "$_exit_list[1]" == ""}
-	{
-		#LINE ignore #SHOW {<030>Es gibt keine sichtbaren Ausgaenge.<090>};
-
-		#RETURN {#NOP};
-	};
-
+	#LOCAL {_exit_list}     {$GMCP[room][info][exits]};
 	#LOCAL {_checked_exits} {};
 	#LOCAL {_exit}          {};
 
@@ -395,6 +384,26 @@
 
 	#LOCAL {_checked_exits} {@_map_check_exits{$_checked_exits}};
 
+	@_print_exits{sichtbare; {$_checked_exits}};
+	#RETURN {#NOP};
+};
+
+#FUNCTION {_print_exits}
+{
+	#LOCAL {_adjective}  {%1};
+	#LOCAL {_exit_list}  {%2};
+	#LOCAL {_exit_count} {&_exit_list[]};
+
+	#IF {$_exit_count == 0 || $_exit_count == 1 && "*_exit_list[+1]" == ""}
+	{
+		#LOCAL  {_output} {};
+		#FORMAT {_output} {%cEs gibt keine %sn Ausgaenge.}
+			{yellow} {$_adjective};
+
+		#LINE ignore #SHOW {$_output};
+		#RETURN {#NOP};
+	};
+
 	#IF {$_exit_count == 1}
 	{
 		#LOCAL {_color} {yellow bold};
@@ -403,9 +412,11 @@
 			#LOCAL {_color} {yellow};
 		};
 
-		#LINE ignore #ECHO {%cEs gibt einen sichtbaren Ausgang: %c\e[4m%s\e[24m%c.}
-				{yellow} {$_color} {$_exit_list[1]} {yellow};
+		#LOCAL  {_output} {};
+		#FORMAT {_output} {%cEs gibt einen %sn Ausgang: %c\e[4m%s\e[24m%c.}
+			{yellow} {$_adjective} {$_color} {*_exit_list[+1]} {yellow};
 
+		#LINE ignore #SHOW {$_output};
 		#RETURN {#NOP};
 	};
 
@@ -422,9 +433,9 @@
 		#DEFAULT  { #LOCAL {_exit_count_string} {$_exit_count} };
 	};
 
-	#LOCAL {_output} {};
-	#FORMAT {_output} {<030>Es gibt %s sichtbare Ausgaenge: }
-		{$_exit_count_string};
+	#LOCAL  {_output} {};
+	#FORMAT {_output} {%cEs gibt %s sichtbare Ausgaenge: }
+		{yellow} {$_exit_count_string};
 
 	#LOCAL {_i} {0};
 	#LOOP {1} {$_exit_count} {_i}
@@ -437,16 +448,16 @@
 		};
 
 		#LOCAL {_color} {yellow bold};
-		#IF {$_checked_exits[$_exit_list[$_i]]}
+		#IF {$_exit_list[+$_i]}
 		{
 			#LOCAL {_color} {yellow};
 		};
 
 		#FORMAT {_output} {%s%c\e[4m%s\e[24m%c}
-			{$_output} {$_color} {$_exit_list[$_i]} {yellow};
+			{$_output} {$_color} {*_exit_list[+$_i]} {yellow};
 	};
 
-	#FORMAT {_output} {%s.} {$_output};
+	#CAT {_output} {.};
 
 	#LINE ignore #SHOW {$_output};
 	#RETURN {#NOP};
