@@ -416,7 +416,7 @@
 	#IF {$_exit_count == 1}
 	{
 		#LOCAL {_color} {yellow bold};
-		#IF {$_checked_exits[$_exit_list[1]]}
+		#IF {$_exit_list[+1]}
 		{
 			#LOCAL {_color} {yellow};
 		};
