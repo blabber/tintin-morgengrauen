@@ -421,9 +421,12 @@
 			#LOCAL {_color} {yellow};
 		};
 
+		#LOCAL {_name}    {*_exit_list[+1]};
+		#LOCAL {_command} {@_map_exit_command_name{$_name}};
+
 		#LOCAL  {_output} {};
-		#FORMAT {_output} {%cEs gibt einen %sn Ausgang: %c\e[4m%s\e[24m%c.}
-			{yellow} {$_adjective} {$_color} {*_exit_list[+1]} {yellow};
+		#FORMAT {_output} {%cEs gibt einen %sn Ausgang: %c\e]68;1;;%s\a\e[4m%s\e[24m%c.}
+			{yellow} {$_adjective} {$_color} {$_command} {$_name} {yellow};
 
 		#LINE ignore #SHOW {$_output};
 		#RETURN {#NOP};
@@ -462,8 +465,11 @@
 			#LOCAL {_color} {yellow};
 		};
 
-		#FORMAT {_output} {%s%c\e[4m%s\e[24m%c}
-			{$_output} {$_color} {*_exit_list[+$_i]} {yellow};
+		#LOCAL {_name}    {*_exit_list[+$_i]};
+		#LOCAL {_command} {@_map_exit_command_name{$_name}};
+
+		#FORMAT {_output} {%s%c\e]68;1;;%s\a\e[4m%s\e[24m%c}
+			{$_output} {$_color} {$_command} {$_name} {yellow};
 	};
 
 	#CAT {_output} {.};
@@ -564,6 +570,32 @@
 		#DEFAULT   { #RETURN {$_short} };
 	};
 }
+
+#FUNCTION {_map_exit_command_name}
+{
+	#IF {!$MAP[in_map] || $MAP[mismatch]}
+	{
+		#RETURN {%1};
+	};
+
+	#LOCAL {_command} {@_map_dir_long_short{%1}};
+	#LOCAL {_exit}    {};
+	#LOCAL {_exits}	  {};
+
+	#MAP get roomexits {_exits};
+	#FOREACH {*_exits[%*]} {_exit}
+	{
+		#LOCAL {_exit_data} {};
+		#MAP exit {$_exit} save {_exit_data};
+		#IF {"$_exit_data[command]" == "$_command"}
+		{
+			#RETURN {$_exit_data[name]};
+		}
+	};
+
+
+	#RETURN {$_command};
+};
 
 @PUBSUB_SUBSCRIBE{screen_changed;       _map_setup};
 @PUBSUB_SUBSCRIBE{prompt_received;      _map_on_prompt_received};
