@@ -168,30 +168,18 @@
 		#RETURN {0};
 	};
 
-	#LOCAL {_target} {};
-	#SWITCH {"$_exit"}
-	{
-		#CASE "unten"      { #LOCAL {_target} {u} };
-		#CASE "osten"      { #LOCAL {_target} {o} };
-		#CASE "norden"     { #LOCAL {_target} {n} };
-		#CASE "nordosten"  { #LOCAL {_target} {no} };
-		#CASE "nordwesten" { #LOCAL {_target} {nw} };
-		#CASE "sueden"     { #LOCAL {_target} {s} };
-		#CASE "suedosten"  { #LOCAL {_target} {so} };
-		#CASE "suedwesten" { #LOCAL {_target} {sw} };
-		#CASE "oben"       { #LOCAL {_target} {ob} };
-		#CASE "westen"     { #LOCAL {_target} {w} };
-		#DEFAULT           { #LOCAL {_target} {$_exit} };
-	};
 
 	#LOCAL {_exits} {};
 	#MAP get roomexits {_exits} {$_vnum};
+
+	#LOCAL {_target} {@_map_dir_long_short{$_exit}};
 
 	#LOCAL {_exit_name} {};
 	#FOREACH {*_exits[%*]} {_exit_name}
 	{
 		#LOCAL {_exit} {};
 		#MAP exit {$_exit_name} save {_exit};
+
 		#IF {"$_exit[name]" == "$_target" || "$_exit[command]" == "$_target"}
 		{
 			#RETURN {1};
@@ -383,12 +371,33 @@
 	};
 
 	#LOCAL {_checked_exits} {@_map_check_exits{$_checked_exits}};
+	@_map_print_exits{sichtbare; {$_checked_exits}};
 
-	@_print_exits{sichtbare; {$_checked_exits}};
+	#IF {!$MAP[in_map] || $MAP[mismatch]}
+	{
+		#RETURN {#NOP};
+	};
+
+	#LOCAL {_exclusively_mapped_exits} {};
+	#LOCAL {_mapped_exits}             {};
+	#MAP get roomexits {_mapped_exits};
+
+	#LOCAL {_mapped_exit} {};
+	#FOREACH {*_mapped_exits[%*]} {_mapped_exit}
+	{
+		#LOCAL {_mapped_exit_name} {@_map_dir_short_long{$_mapped_exit}};
+		#IF {"$_checked_exits[$_mapped_exit_name]" == ""}
+		{
+			#LOCAL {_exclusively_mapped_exits[$_mapped_exit_name]} {1};
+		};
+	};
+
+	@_map_print_exits{manuell erfasste; {$_exclusively_mapped_exits}};
+
 	#RETURN {#NOP};
 };
 
-#FUNCTION {_print_exits}
+#FUNCTION {_map_print_exits}
 {
 	#LOCAL {_adjective}  {%1};
 	#LOCAL {_exit_list}  {%2};
@@ -434,8 +443,8 @@
 	};
 
 	#LOCAL  {_output} {};
-	#FORMAT {_output} {%cEs gibt %s sichtbare Ausgaenge: }
-		{yellow} {$_exit_count_string};
+	#FORMAT {_output} {%cEs gibt %s %s Ausgaenge: }
+		{yellow} {$_exit_count_string} {$_adjective};
 
 	#LOCAL {_i} {0};
 	#LOOP {1} {$_exit_count} {_i}
@@ -517,6 +526,44 @@
 
 	#MAP run {$_vnum} {0.25};
 };
+
+#FUNCTION {_map_dir_long_short}
+{
+	#LOCAL {_long} {%1};
+	#SWITCH {"$_long"}
+	{
+		#CASE "unten"      { #RETURN {u} };
+		#CASE "osten"      { #RETURN {o} };
+		#CASE "norden"     { #RETURN {n} };
+		#CASE "nordosten"  { #RETURN {no} };
+		#CASE "nordwesten" { #RETURN {nw} };
+		#CASE "sueden"     { #RETURN {s} };
+		#CASE "suedosten"  { #RETURN {so} };
+		#CASE "suedwesten" { #RETURN {sw} };
+		#CASE "oben"       { #RETURN {ob} };
+		#CASE "westen"     { #RETURN {w} };
+		#DEFAULT           { #RETURN {$_long} };
+	};
+}
+
+#FUNCTION {_map_dir_short_long}
+{
+	#LOCAL {_short} {%1};
+	#SWITCH {"$_short"}
+	{
+		#CASE "u"  { #RETURN {unten} };
+		#CASE "o"  { #RETURN {osten} };
+		#CASE "n"  { #RETURN {norden} };
+		#CASE "no" { #RETURN {nordosten} };
+		#CASE "nw" { #RETURN {nordwesten} };
+		#CASE "s"  { #RETURN {sueden} };
+		#CASE "so" { #RETURN {suedosten} };
+		#CASE "sw" { #RETURN {suedwesten} };
+		#CASE "ob" { #RETURN {oben} };
+		#CASE "w"  { #RETURN {westen} };
+		#DEFAULT   { #RETURN {$_short} };
+	};
+}
 
 @PUBSUB_SUBSCRIBE{screen_changed;       _map_setup};
 @PUBSUB_SUBSCRIBE{prompt_received;      _map_on_prompt_received};
