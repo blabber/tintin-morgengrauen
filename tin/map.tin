@@ -486,15 +486,25 @@
 
 #EVENT {MAP ROOM SHORT-CLICKED MOUSE BUTTON ONE}
 {
-	#LOCAL {_vnum}      {%4};
+	#LOCAL {_vnum} {%4};
 
 	#LOCAL {_current_vnum} {};
 	#MAP get roomvnum {_current_vnum};
 
-	#IF {$_current_vnum != $_vnum}
+	#LOCAL {_void} {0};
+	#MAP at {$_vnum} #MAP roomflag void get {_void};
+
+	#IF {$_void}
 	{
-		#MAP run {$_vnum} {0.25};
+		#RETURN;
 	};
+
+	#IF {$_current_vnum == $_vnum}
+	{
+		#RETURN;
+	};
+
+	#MAP run {$_vnum} {0.25};
 };
 
 @PUBSUB_SUBSCRIBE{screen_changed;       _map_setup};
