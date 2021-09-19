@@ -385,8 +385,10 @@
 	#LOCAL {_mapped_exit} {};
 	#FOREACH {*_mapped_exits[%*]} {_mapped_exit}
 	{
-		#LOCAL {_mapped_exit_name} {@_map_dir_short_long{$_mapped_exit}};
-		#IF {"$_checked_exits[$_mapped_exit_name]" == ""}
+		#LOCAL {_mapped_exit_name}    {@_map_dir_short_long{$_mapped_exit}};
+		#LOCAL {_mapped_exit_command} {@_map_exit_name_command{$_mapped_exit}};
+		#IF {"$_checked_exits[$_mapped_exit_name]" == "" &&
+			"$_checked_exits[$_mapped_exit_command]" == ""}
 		{
 			#LOCAL {_exclusively_mapped_exits[$_mapped_exit_name]} {1};
 		};
@@ -595,6 +597,32 @@
 
 
 	#RETURN {$_command};
+};
+
+#FUNCTION {_map_exit_name_command}
+{
+	#IF {!$MAP[in_map] || $MAP[mismatch]}
+	{
+		#RETURN {%1};
+	};
+
+	#LOCAL {_name}    {%1};
+	#LOCAL {_exit}    {};
+	#LOCAL {_exits}	  {};
+
+	#MAP get roomexits {_exits};
+	#FOREACH {*_exits[%*]} {_exit}
+	{
+		#LOCAL {_exit_data} {};
+		#MAP exit {$_exit} save {_exit_data};
+		#IF {"$_exit_data[name]" == "$_name"}
+		{
+			#RETURN {$_exit_data[command]};
+		}
+	};
+
+
+	#RETURN {$_name};
 };
 
 @PUBSUB_SUBSCRIBE{screen_changed;       _map_setup};
