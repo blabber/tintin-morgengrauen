@@ -15,7 +15,7 @@
 			#IF {$AUTOAWAY[away]}
 			{
 				#RETURN;
-			}
+			};
 
 			#SEND {weg $AUTOAWAY[message]};
 			#VARIABLE {AUTOAWAY[away]} {1};
