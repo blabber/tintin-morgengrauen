@@ -427,7 +427,7 @@
 		#LOCAL {_command} {@_map_exit_command_name{$_name}};
 
 		#LOCAL  {_output} {};
-		#FORMAT {_output} {%cEs gibt einen %sn Ausgang: %c\e]68;1;;%s\a\e[4m%s\e[24m%c.}
+		#FORMAT {_output} {%cEs gibt einen %sn Ausgang: %c\e]68;2;MAP_MOVE;%s\a\e[4m%s\e[24m%c.}
 			{yellow} {$_adjective} {$_color} {$_command} {$_name} {yellow};
 
 		#LINE ignore #SHOW {$_output};
@@ -470,7 +470,7 @@
 		#LOCAL {_name}    {*_exit_list[+$_i]};
 		#LOCAL {_command} {@_map_exit_command_name{$_name}};
 
-		#FORMAT {_output} {%s%c\e]68;1;;%s\a\e[4m%s\e[24m%c}
+		#FORMAT {_output} {%s%c\e]68;2;MAP_MOVE;%s\a\e[4m%s\e[24m%c}
 			{$_output} {$_color} {$_command} {$_name} {yellow};
 	};
 
@@ -507,7 +507,7 @@
 	#RETURN {#NOP};
 };
 
-#EVENT {PRESSED LINK MOUSE BUTTON ONE}
+#EVENT {PRESSED SECURE LINK MAP_MOVE MOUSE BUTTON ONE}
 {
 	%4;
 };
