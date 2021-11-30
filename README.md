@@ -164,8 +164,12 @@ die in normalen Fonts nicht enthalten sind. Ich verwende einen normalen
 [Monospace Font](https://sourcefoundry.org/hack/) ergänzt durch die TTF Variante
 von [GNU Unifont](http://unifoundry.com/unifont/index.html). Da ich nicht davon
 ausgehe das jeder eine solche Konfiguration einsetzt, und die Gefahr von
-Informationsverlust besteht, enthält diese Karte den Stub einer ASCII Karte
-(`#map flag asciigraphics`).
+Informationsverlust besteht, enthält dieses Repository den Stub einer ASCII
+Karte (`#map flag asciigraphics`).
+
+### weiterführende Links
+
+* [Braindump zum Mapping von Portalen](https://github.com/blabber/tintin-morgengrauen/issues/1#issuecomment-981505436)
 
 Tastenkürzel
 ------------
